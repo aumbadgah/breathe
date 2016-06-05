@@ -1,0 +1,40 @@
+
+html,
+body {
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	font-family: arial, sans-serif;
+	color: white;
+}
+
+.sp-container {
+	background-color: white;
+
+	.sp-button-container button {
+		background-image: initial;
+	}
+}
+
+@infoTextGrey: #ABABAB;
+@modalBackgroundGrey: rgba(72,72,72,.8);
+@modalControlBackgroundLightGrey: rgba(255, 255, 255, 0.3);
+@statusSuccessGreen: #24DE35;
+@themeItemDeleteRed: #FF5E36;
+
+@zIndexControlBtnOnTop: 9999995;
+@zIndexControlWidgetOnTop: 9000;
+@zIndexControlWidgetOnBottom: 300;
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+@fontOpenSans: 'Open Sans', sans-serif;
+
+@import '_container';
+@import '_container_mobile';
+@import '_control-widget';
+@import '_content-widget';
+@import '_nav-bar';
+
+@import '_color-picker';

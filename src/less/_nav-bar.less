@@ -1,0 +1,54 @@
+
+.nav-bar {
+
+    &#top-nav {
+	    top: 0;
+    }
+    &#bottom-nav {
+	    bottom: 0;
+    }
+
+    .nav-item {
+    	display: inline-block;
+    	height: 100%;
+    	width: 4em;
+    	float: right;
+		transition-property: opacity;
+		transition-duration: 0.5s;
+		opacity: 1;
+		cursor: pointer;
+
+    	&.logo {
+    		float: left;
+			transition-property: transform;
+			transition-duration: 0.3s;
+    		transform: scale(1);
+
+    		img {
+			    width: 1.5em;
+			    top: 50%;
+			    left: 50%;
+			    position: relative;
+			    transform: translate(-50%, -50%);
+    		}
+    	}
+    	&.logo:hover {
+			transition-property: transform;
+			transition-duration: 0.3s;
+    		transform: scale(1.3);
+    	}
+
+    	.fa {
+    		top: 50%;
+		    left: 50%;
+		    position: relative;
+		    margin: auto;
+		    transform: translate(-50%, -50%);
+		    font-size: 1.3em;
+    	}
+	    &.active:not(#full) .fa {
+		    padding: 6px;
+			background-color: rgba(255, 255, 255, 0.3);
+	    }
+    }
+}

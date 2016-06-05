@@ -69,6 +69,7 @@ Navigation.prototype.init = function init() {
 			let item = {
 				elem: $('<div>', itemConfig)
 				.addClass(navItem.type)
+				.attr('id', navItem.name)
 				.append(icon),
 				name: navItem.name,
 				type: navItem.type

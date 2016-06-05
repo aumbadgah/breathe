@@ -13,10 +13,8 @@ const inject = require('gulp-inject');
 const less = require('gulp-less');
 const livereload = require('gulp-livereload');
 const open = require('gulp-open');
-const path = require('path');
 const source = require('vinyl-source-stream')
 const uglify = require('gulp-uglify');
-// const rename = require('gulp-rename');
 
 const config = {
 	environmentProd: 'prod',

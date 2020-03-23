@@ -50,45 +50,45 @@
 		items: [
 			{
 				name: 'logo',
-				href: 'http://pilatesoulu.com',
+				href: 'https://pilatesoulu.com',
 				imgSrc: 'img/pilates-oulu-icon.png',
 				type: 'logo'
 			},
-			{
-				name: 'facebook',
-				fa: 'fa-facebook-official',
-				type: 'social-item',
-				action: function (queryStringParam) {
-					const uri = window.location.origin + window.location.pathname + '?' + Config.breatheQueryStringParamName + '=' + queryStringParam;
-					if (Tools.isLocal()) {
-						console.log('Vendor.getTinyUrl(uri');
-						console.log(uri);
-					} else {
-						Vendor.getTinyUrl(uri, (tinyUri) => {
-							FB.ui({
-								method: 'share',
-								href: tinyUri,
-							}, function(response){});
-						});
-					}
-				}
-			},
-			{
-				name: 'whatsapp',
-				fa: 'fa-whatsapp',
-				type: 'social-item',
-				action: function (queryStringParam) {
-					const uri = window.location.origin + window.location.pathname + '?' + Config.breatheQueryStringParamName + '=' + queryStringParam;
-					if (Tools.isLocal()) {
-						console.log('Vendor.getTinyUrl(uri');
-						console.log(uri);
-					} else {
-						Vendor.getTinyUrl(uri, (tinyUri) => {
-							window.open("whatsapp://send?text=" + tinyUri);
-						});
-					}
-				}
-			},
+			// {
+			// 	name: 'facebook',
+			// 	fa: 'fa-facebook-official',
+			// 	type: 'social-item',
+			// 	action: function (queryStringParam) {
+			// 		const uri = window.location.origin + window.location.pathname + '?' + Config.breatheQueryStringParamName + '=' + queryStringParam;
+			// 		if (Tools.isLocal()) {
+			// 			console.log('Vendor.getTinyUrl(uri');
+			// 			console.log(uri);
+			// 		} else {
+			// 			Vendor.getTinyUrl(uri, (tinyUri) => {
+			// 				FB.ui({
+			// 					method: 'share',
+			// 					href: tinyUri,
+			// 				}, function(response){});
+			// 			});
+			// 		}
+			// 	}
+			// },
+			// {
+			// 	name: 'whatsapp',
+			// 	fa: 'fa-whatsapp',
+			// 	type: 'social-item',
+			// 	action: function (queryStringParam) {
+			// 		const uri = window.location.origin + window.location.pathname + '?' + Config.breatheQueryStringParamName + '=' + queryStringParam;
+			// 		if (Tools.isLocal()) {
+			// 			console.log('Vendor.getTinyUrl(uri');
+			// 			console.log(uri);
+			// 		} else {
+			// 			Vendor.getTinyUrl(uri, (tinyUri) => {
+			// 				window.open("whatsapp://send?text=" + tinyUri);
+			// 			});
+			// 		}
+			// 	}
+			// },
 		]
 	};
 

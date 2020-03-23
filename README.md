@@ -33,6 +33,14 @@ Run prod (minified)
 
 ##### Todo
 
+- https pilates oulun linkkiin
+- hide facebook link (until functionality fixed)
+- redo default color schemes
+
+
+
+
+
 - Utilize Theme class fully. Currently ThemeList and MultiColorPicker utilize object literals rather than class instances
 
 - Minimize MultiColorPicker foot print by using a single on-demand instace of ColorPicker

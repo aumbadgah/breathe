@@ -18,7 +18,7 @@ CookieInfo.prototype.init = function () {
 		}
 	});
 	let infoWrapper = $('<span class="info-wrapper"></span>');
-	infoWrapper.append('<span class="text">Sivusto käyttää evästeitä väriteemojen tallentamiseen, jatkamalla hyväksyt evästeiden käytön.</span>');
+	infoWrapper.append('<span class="text">This site uses cookies to enable saving color themes in your browser. By continuing to browse the site, you are agreeing to our use of cookies.</span>');
 	infoWrapper.append('<br>');
 	infoWrapper.append('<span class="confirm">OK</span>');
 	infoContainer.append(infoWrapper);

@@ -1,0 +1,103 @@
+@import "mixins";
+@import "variables";
+
+.container.mobile {
+  font-size: 22px;
+
+  .nav-bar .nav-item {
+    width: 5em;
+
+    &.logo img {
+      width: 2em;
+    }
+    .fa {
+      font-size: font-size-large;
+    }
+  }
+
+  #multi-color-picker {
+    .color-picker-container .fa {
+      font-size: 1.6em;
+    }
+    .widget-controls {
+      .control,
+      .status {
+        width: 5em;
+
+        .fa {
+          font-size: font-size-large;
+        }
+      }
+    }
+  }
+
+  .control-widget {
+    @include transition(right, $transition-duration);
+    @include transition(z-index, $transition-duration);
+    right: -33.3%;
+    width: 33.3%;
+
+    .theme-item {
+      height: 6em;
+
+      .control {
+        width: 4.1em;
+
+        .fa {
+          font-size: font-size-large;
+        }
+      }
+    }
+  }
+
+  ~ .sp-container {
+    left: initial !important;
+    right: 12.5%;
+  }
+
+  #whatsapp {
+    display: inline-block;
+  }
+
+  ~ .sp-container .sp-picker-container {
+    width: 400px;
+
+    .sp-button-container {
+      margin-top: 8px;
+
+      .sp-cancel,
+      .sp-choose {
+        font-size: font-size-large;
+      }
+    }
+    .sp-palette-row-initial .sp-thumb-el {
+      width: 60px;
+      height: 46px;
+
+      .sp-thumb-inner {
+        width: 60px;
+        height: 46px;
+      }
+    }
+  }
+
+  &.full {
+    .control-widget {
+      @include transition(right, $transition-duration);
+      right: -33.3%;
+    }
+  }
+
+  &.colorpicker,
+  &.list {
+    .content-widget,
+    .nav-bar {
+      @include transition(width, $transition-duration);
+      width: 66.7%;
+    }
+    .control-widget {
+      @include transition(right, $transition-duration);
+      right: 0;
+    }
+  }
+}

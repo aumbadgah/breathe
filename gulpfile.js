@@ -7,7 +7,7 @@ const cssmin = require("gulp-cssmin");
 const gulp = require("gulp");
 const gulpif = require("gulp-if");
 const inject = require("gulp-inject");
-const less = require("gulp-less");
+const sass = require("gulp-sass")(require("sass"));
 const livereload = require("gulp-livereload");
 const source = require("vinyl-source-stream");
 const uglify = require("gulp-uglify");
@@ -26,8 +26,8 @@ const isProd = () => {
 gulp.task("css", () => {
   const prod = isProd();
   return gulp
-    .src("./src/less/main.less")
-    .pipe(less())
+    .src("./src/scss/main.scss") // Update the source file to SCSS
+    .pipe(sass().on("error", sass.logError)) // Use sass() instead of less()
     .pipe(
       autoprefixer({
         cascade: false,

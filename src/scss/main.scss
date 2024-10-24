@@ -1,0 +1,29 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: arial, sans-serif;
+  color: white;
+}
+
+.sp-container {
+  background-color: white;
+
+  .sp-button-container button {
+    background-image: initial;
+  }
+}
+
+@import "variables";
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+@import "container";
+@import "container_mobile";
+@import "control-widget";
+@import "content-widget";
+@import "nav-bar";
+
+@import "color-picker";

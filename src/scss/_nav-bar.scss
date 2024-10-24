@@ -1,0 +1,56 @@
+@import "mixins";
+@import "variables";
+
+.nav-bar {
+  &#top-nav {
+    top: 0;
+  }
+  &#bottom-nav {
+    bottom: 0;
+  }
+
+  .nav-item {
+    height: 100%;
+    width: 4em;
+    float: right;
+    @include transition(opacity, $transition-duration);
+    opacity: 1;
+    cursor: pointer;
+
+    &.logo {
+      float: left;
+      transform: scale(1);
+
+      img {
+        width: 1.5em;
+        top: 50%;
+        left: 50%;
+        position: relative;
+        transform: translate(-50%, -50%);
+      }
+      &:hover {
+        @include transition(transform, 0.3s);
+        transform: scale(1.3);
+      }
+    }
+
+    .fa {
+      top: 50%;
+      left: 50%;
+      position: relative;
+      margin: auto;
+      transform: translate(-50%, -50%);
+      font-size: 1.5em;
+    }
+    &.active:not(#full) .fa {
+      padding: 0.375em;
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+.container:not(.mobile) {
+  #whatsapp {
+    display: none;
+  }
+}

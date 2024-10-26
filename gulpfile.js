@@ -1,86 +1,142 @@
-const autoprefixer = require("gulp-autoprefixer");
-const babel = require("babelify");
-const browserify = require("browserify");
-const buffer = require("vinyl-buffer");
-const concat = require("gulp-concat-util");
-const cssmin = require("gulp-cssmin");
 const gulp = require("gulp");
+const sass = require("gulp-sass")(require("sass"));
+const cleanCSS = require("gulp-clean-css");
 const gulpif = require("gulp-if");
 const inject = require("gulp-inject");
-const sass = require("gulp-sass")(require("sass"));
-const livereload = require("gulp-livereload");
-const source = require("vinyl-source-stream");
-const uglify = require("gulp-uglify");
+const babel = require("gulp-babel");
+const webpack = require("webpack");
+const webpackStream = require("webpack-stream");
+const terser = require("gulp-terser");
+const ts = require("gulp-typescript");
+const browserSync = require("browser-sync").create();
+const del = require("del");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const rename = require("gulp-rename");
 
-const config = {
-  environmentProd: "prod",
-};
+const isProd = process.env.NODE_ENV === "production";
 
-const env = process.env.NODE_ENV || config.environmentProd;
-console.log("Running build for environment: " + env);
+// Clean build folder
+gulp.task("clean", () => del(["build"]));
 
-const isProd = () => {
-  return env === config.environmentProd;
-};
-
+// Process SCSS
 gulp.task("css", () => {
-  const prod = isProd();
   return gulp
-    .src("./src/scss/main.scss") // Update the source file to SCSS
-    .pipe(sass().on("error", sass.logError)) // Use sass() instead of less()
-    .pipe(
-      autoprefixer({
-        cascade: false,
-      })
-    )
-    .pipe(gulpif(prod, cssmin()))
-    .pipe(gulpif(prod, concat("all.min.css")))
-    .pipe(gulp.dest("./build/css"));
+    .src("./src/scss/main.scss")
+    .pipe(sass().on("error", sass.logError))
+    .pipe(gulpif(isProd, cleanCSS()))
+    .pipe(gulp.dest("./build/css"))
+    .pipe(rename("bundle.css"))
+    .pipe(gulp.dest("./build/css"))
+    .pipe(browserSync.stream());
 });
 
-gulp.task("static", () => {
-  return gulp.src("./src/img/**/*").pipe(gulp.dest("./build/img"));
-});
+const tsProject = ts.createProject("tsconfig.json");
 
 gulp.task("js", () => {
-  const prod = isProd();
-  return browserify("./src/js/main.js")
-    .transform(
-      babel.configure({
-        presets: ["@babel/preset-env"],
-      })
+  return gulp
+    .src("./src/js/index.ts")
+    .pipe(
+      webpackStream(
+        {
+          mode: isProd ? "production" : "development",
+          devtool: isProd ? false : "source-map",
+          entry: "./src/js/index.ts",
+          output: {
+            filename: "bundle.js",
+          },
+          resolve: {
+            extensions: [".ts", ".js"],
+          },
+          module: {
+            rules: [
+              {
+                test: /\.ts$/,
+                use: [
+                  {
+                    loader: "babel-loader",
+                    options: {
+                      presets: ["@babel/preset-env"],
+                    },
+                  },
+                  "ts-loader",
+                ],
+                exclude: /node_modules/,
+              },
+              {
+                test: /\.css$/,
+                use: [MiniCssExtractPlugin.loader, "css-loader"],
+              },
+              {
+                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+                use: [
+                  {
+                    loader: "file-loader",
+                    options: {
+                      name: "[name].[ext]",
+                      outputPath: "fonts/",
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          plugins: [
+            new MiniCssExtractPlugin({
+              filename: "bundle.css",
+            }),
+          ],
+        },
+        webpack
+      )
     )
-    .bundle()
-    .pipe(source("bundle.js"))
-    .pipe(gulpif(prod, buffer()))
-    .pipe(gulpif(prod, uglify()))
-    .pipe(gulp.dest("./build/js/"));
+    .pipe(gulpif(isProd, terser()))
+    .pipe(gulp.dest("./build/js"));
 });
 
+// Copy static assets
+gulp.task("static", () => {
+  return gulp
+    .src("./src/img/**/*")
+    .pipe(gulp.dest("./build/img"))
+    .pipe(browserSync.stream());
+});
+
+// Inject CSS and JS into HTML
 gulp.task("html", () => {
   return gulp
     .src("./src/index.html")
     .pipe(
       inject(
-        gulp.src(["./build/js/**/*.js", "./build/css/**/*.css"], {
+        gulp.src(["./build/js/bundle.js", "./build/css/bundle.css"], {
           read: false,
         }),
         {
           ignorePath: "build",
-          transform: function (filepath, file, i, length) {
-            if (filepath.slice(-2) === "js") {
-              return '<script src="' + filepath.substr(1) + '"></script>';
-            } else if (filepath.slice(-3) === "css") {
-              return (
-                '<link rel="stylesheet" href="' + filepath.substr(1) + '">'
-              );
-            }
-          },
+          addRootSlash: false,
         }
       )
     )
     .pipe(gulp.dest("./build"))
-    .pipe(livereload());
+    .pipe(browserSync.stream());
 });
 
-gulp.task("default", gulp.parallel("html", "css", "js", "static"));
+// Watch files
+gulp.task("watch", () => {
+  browserSync.init({
+    server: "./build",
+  });
+
+  gulp.watch("./src/scss/**/*.scss", gulp.series("css"));
+  gulp.watch("./src/js/**/*.ts", gulp.series("js"));
+  gulp.watch("./src/img/**/*", gulp.series("static"));
+  gulp.watch("./src/index.html", gulp.series("html"));
+});
+
+// Build task
+gulp.task(
+  "build",
+  gulp.series("clean", gulp.parallel("css", "js", "static"), "html")
+);
+
+// Default task
+gulp.task("default", gulp.series("build", "watch"));

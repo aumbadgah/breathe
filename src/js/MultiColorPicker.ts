@@ -73,8 +73,8 @@ class MultiColorPicker extends Widget {
 
       const handleColorPickerChange = (color: any) => {
         if (!color) return;
-
         const hexColor = color.toHexString();
+
         picker.elem.css("background-color", hexColor);
         this.config.theme[property] = hexColor;
         this.config.broadcast("setTheme", this.config.theme);
@@ -94,7 +94,6 @@ class MultiColorPicker extends Widget {
     const control = $("<span>", {
       class: "control",
       click: () => {
-        console.log("Saving theme:", this.config.theme);
         this.config.broadcast("saveTheme", this.config.theme);
         this.showStatus();
       },

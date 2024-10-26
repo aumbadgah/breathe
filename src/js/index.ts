@@ -72,13 +72,16 @@ import Widget from "./Widget";
   const broadcast = (event: string, value: any) => {
     const handler = "on" + event.charAt(0).toUpperCase() + event.slice(1);
 
+    // Create a deep copy of the value
+    const immutableValue = _.cloneDeep(value);
+
     if (typeof state[handler as keyof State] !== "undefined") {
-      (state[handler as keyof State] as (value: any) => void)(value);
+      (state[handler as keyof State] as (value: any) => void)(immutableValue);
     }
 
     widgets
       .filter((widget) => typeof (widget as any)[handler] !== "undefined")
-      .forEach((widget) => (widget as any)[handler](value));
+      .forEach((widget) => (widget as any)[handler](immutableValue));
   };
 
   const getState = function (property: keyof State, cb: (value: any) => void) {

@@ -5,7 +5,7 @@ import { getCookie, setCookie, getSlug } from "./util";
 
 interface ThemeListConfig {
   themes: Theme[];
-  broadcast: (event: string, data: any) => void;
+  broadcast: (event: string, data: unknown) => void;
 }
 
 class ThemeList extends Widget {
@@ -36,7 +36,7 @@ class ThemeList extends Widget {
       } else {
         return [];
       }
-    } catch (e) {
+    } catch (_) {
       return [];
     }
   }
@@ -94,30 +94,19 @@ class ThemeList extends Widget {
   }
 
   static identical(oneTheme: ThemeConfig, twoTheme: ThemeConfig): boolean {
-    console.log("identical called with:", oneTheme, twoTheme);
     return Theme.getValidKeys().every((key) => oneTheme[key] === twoTheme[key]);
   }
 
   onSaveTheme(newTheme: ThemeConfig): this {
-    console.log("onSaveTheme called with:", newTheme);
     if (Theme.validate(newTheme)) {
-      console.log("Theme is valid");
       newTheme = Theme.getOnlyValidKeys(newTheme);
-      console.log("Filtered theme:", newTheme);
       const identical = this.themes.some((theme) => {
         return ThemeList.identical(theme.values, newTheme);
       });
-      console.log("Is theme identical to an existing one?", identical);
       if (!identical) {
-        console.log("Adding new theme");
         this.themes.unshift(new Theme(newTheme));
-        console.log("Themes after adding:", this.themes);
         this.save().paint().onSetTheme(newTheme);
-      } else {
-        console.log("Theme already exists, not adding");
       }
-    } else {
-      console.log("Theme is invalid");
     }
     return this;
   }

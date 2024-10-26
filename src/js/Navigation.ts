@@ -1,4 +1,4 @@
-import Theme from "./Theme";
+import Theme, { ThemeConfig } from "./Theme";
 // import Vendor from "./Vendor";
 import $ from "jquery";
 import Widget from "./Widget";
@@ -28,15 +28,15 @@ interface NavbarProps {
 interface NavigationConfig {
   container: JQuery;
   navbars: NavbarConfig[];
-  broadcast: (event: string, data: any) => void;
-  getState: (property: keyof State, cb: (value: any) => void) => void;
+  broadcast: (event: string, data: unknown) => void;
+  getState: (property: keyof State, cb: (value: unknown) => void) => void;
 }
 
 interface NavigationProps {
   container: JQuery;
   navbars: NavbarProps[];
-  broadcast: (event: string, data: any) => void;
-  getState: (property: keyof State, cb: (value: any) => void) => void;
+  broadcast: (event: string, data: unknown) => void;
+  getState: (property: keyof State, cb: (value: unknown) => void) => void;
 }
 
 class Navigation extends Widget {
@@ -123,7 +123,11 @@ class Navigation extends Widget {
             item.elem.click(() => {
               // Vendor.ga("social", navItem.name);
               this.config.getState("theme", (theme) => {
-                action(JSON.stringify(Theme.getOnlyValidKeys(theme)));
+                if (typeof theme === "object" && theme !== null) {
+                  action(
+                    JSON.stringify(Theme.getOnlyValidKeys(theme as ThemeConfig))
+                  );
+                }
               });
             });
           }

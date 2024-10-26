@@ -11,11 +11,11 @@ interface BreatheProps {
 
 class Breathe extends Widget {
   private config: BreatheProps;
-  private svg?: d3.Selection<SVGGElement, unknown, HTMLElement, any>;
+  private svg?: d3.Selection<SVGGElement, unknown, HTMLElement, null>;
   private elements: {
-    background?: d3.Selection<SVGRectElement, unknown, HTMLElement, any>;
-    bellows?: d3.Selection<SVGEllipseElement, unknown, HTMLElement, any>;
-    center?: d3.Selection<SVGEllipseElement, unknown, HTMLElement, any>;
+    background?: d3.Selection<SVGRectElement, unknown, HTMLElement, null>;
+    bellows?: d3.Selection<SVGEllipseElement, unknown, HTMLElement, null>;
+    center?: d3.Selection<SVGEllipseElement, unknown, HTMLElement, null>;
   };
 
   constructor(id: string, config: Partial<BreatheProps>) {

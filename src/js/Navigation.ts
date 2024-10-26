@@ -1,8 +1,8 @@
+import $ from "jquery";
+import State from "./State";
 import Theme, { ThemeConfig } from "./Theme";
 // import Vendor from "./Vendor";
-import $ from "jquery";
 import Widget from "./Widget";
-import State from "./State";
 
 interface NavItem {
   name: string;

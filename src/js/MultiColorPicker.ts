@@ -1,8 +1,9 @@
 import $ from "jquery";
 import _ from "lodash";
+import "spectrum-colorpicker2";
+
 import Theme, { ThemeConfig } from "./Theme";
 import Widget from "./Widget";
-import "spectrum-colorpicker2";
 
 class MultiColorPicker extends Widget {
   private colorPickers: Array<{ elem: JQuery; id: string; color: string }> = [];

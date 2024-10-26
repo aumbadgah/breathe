@@ -1,14 +1,20 @@
-import "font-awesome/css/font-awesome.min.css";
-import "spectrum-colorpicker2/dist/spectrum.css";
-import "normalize.css";
-
 import $ from "jquery";
 import _ from "lodash";
+
+declare global {
+  interface Window {
+    $: typeof $;
+    jQuery: typeof $;
+  }
+}
+
+(window as any).jQuery = $;
+(window as any).$ = $;
+
 import "spectrum-colorpicker2";
 
 import Breathe from "./Breathe";
 import Config from "./Config";
-// import CookieInfo from "./CookieInfo";
 import MultiColorPicker from "./MultiColorPicker";
 import Navigation from "./Navigation";
 import State from "./State";
@@ -20,7 +26,6 @@ import Widget from "./Widget";
   const template =
     '<div id="container" class="container">' +
     '<div class="widgets">' +
-    // '<div class="widget content-widget" id="cookie-info"></div>' +
     '<div class="widget content-widget" id="breathe"></div>' +
     '<div class="widget control-widget" id="multi-color-picker"></div>' +
     '<div class="widget control-widget" id="theme-list"></div>' +
@@ -70,7 +75,6 @@ import Widget from "./Widget";
   const broadcast = (event: string, original: any) => {
     const handler = "on" + event.charAt(0).toUpperCase() + event.slice(1);
 
-    // Create a deep copy of the value to isolate it from the original
     const deepCopy = _.cloneDeep(original);
 
     if (typeof state[handler as keyof State] !== "undefined") {
@@ -98,7 +102,6 @@ import Widget from "./Widget";
 
     const currentTheme = state.getActiveTheme();
     widgets = [
-      // new CookieInfo("#cookie-info"),
       new MultiColorPicker("#multi-color-picker", {
         theme: currentTheme,
         broadcast: broadcast,

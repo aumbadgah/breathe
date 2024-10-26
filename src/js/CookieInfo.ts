@@ -1,5 +1,5 @@
-import Widget from "./Widget";
 import $ from "jquery";
+import Widget from "./Widget";
 
 class CookieInfo extends Widget {
   constructor(id: string) {

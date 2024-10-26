@@ -11,7 +11,7 @@
 
   .nav-item {
     height: 100%;
-    width: 4em;
+    width: 5em;
     float: right;
     @include transition(opacity, $transition-duration);
     opacity: 1;
@@ -22,9 +22,9 @@
       transform: scale(1);
 
       img {
-        width: 1.5em;
-        top: 50%;
-        left: 50%;
+        width: 2.5em;
+        top: 60%;
+        left: 60%;
         position: relative;
         transform: translate(-50%, -50%);
       }
@@ -40,6 +40,7 @@
       position: relative;
       margin: auto;
       transform: translate(-50%, -50%);
+      font-size: 1.8em;
     }
     &.active:not(#full) .fa {
       padding: 0.375em;

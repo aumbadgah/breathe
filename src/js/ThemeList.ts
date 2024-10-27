@@ -63,14 +63,19 @@ class ThemeList extends Widget {
       this.cookie = ThemeList.parse(rawCookie);
     }
 
-    this.themes = ThemeList.validate(this.cookie);
+    const storedThemes = ThemeList.validate(this.cookie);
 
-    if (this.themes.length === 0) {
-      const shuffledThemes = [...this.config.themes].sort(
-        () => Math.random() - 0.5
-      );
-      this.themes = shuffledThemes.map((theme) => new Theme(theme.values));
+    const shuffledThemes = [
+      ...(storedThemes.length === 0 ? this.config.themes : storedThemes),
+    ].sort(() => Math.random() - 0.5);
+    for (let i = shuffledThemes.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledThemes[i], shuffledThemes[j]] = [
+        shuffledThemes[j],
+        shuffledThemes[i],
+      ];
     }
+    this.themes = shuffledThemes.map((theme) => new Theme(theme.values));
 
     setTimeout(() => {
       this.config.broadcast("setTheme", this.themes[0].values);

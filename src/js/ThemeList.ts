@@ -66,12 +66,15 @@ class ThemeList extends Widget {
     this.themes = ThemeList.validate(this.cookie);
 
     if (this.themes.length === 0) {
-      this.themes = this.config.themes.map((theme) => new Theme(theme.values));
+      const shuffledThemes = [...this.config.themes].sort(
+        () => Math.random() - 0.5
+      );
+      this.themes = shuffledThemes.map((theme) => new Theme(theme.values));
     }
 
     setTimeout(() => {
       this.config.broadcast("setTheme", this.themes[0].values);
-    }, 0);
+    }, 2);
 
     return this;
   }
@@ -165,8 +168,6 @@ class ThemeList extends Widget {
       if (this.elem) this.elem.append(theme.elem);
     });
 
-    if (this.elem)
-      this.elem.append($("<div>max 8 themes</div>").addClass("info"));
     if (this.elem)
       this.elem.append(
         $(

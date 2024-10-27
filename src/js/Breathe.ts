@@ -17,6 +17,7 @@ class Breathe extends Widget {
     bellows?: d3.Selection<SVGEllipseElement, unknown, HTMLElement, null>;
     center?: d3.Selection<SVGEllipseElement, unknown, HTMLElement, null>;
   };
+  isThemeSet: boolean = false;
 
   constructor(id: string, config: Partial<BreatheProps>) {
     super(id);
@@ -42,8 +43,6 @@ class Breathe extends Widget {
 
     if (this.elem)
       this.elem.click(() => this.config.broadcast("setUiState", "full"));
-
-    this.init();
   }
 
   public onSetTheme(theme: BreatheProps["theme"]): this {
@@ -53,6 +52,12 @@ class Breathe extends Widget {
         ...theme,
       };
     }
+
+    if (!this.isThemeSet) {
+      this.isThemeSet = true;
+      this.init();
+    }
+
     return this;
   }
 

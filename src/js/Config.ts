@@ -16,8 +16,9 @@ const Config = {
   defaultThemes: [
     {
       backgroundEmpty: "#aeaeae",
-      backgroundFull: "#d41919",
-      bellowsEmpty: "#c02626",
+      // backgroundFull: "#ffffff",
+      backgroundFull: "#d41919", // high contrast
+      bellowsEmpty: "#c02626", // high contrast
       bellowsFull: "#ffe7e7",
       centerEmpty: "#702929",
       centerFull: "#ffeaea",

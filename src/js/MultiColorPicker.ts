@@ -1,5 +1,6 @@
 import $ from "jquery";
-import _ from "lodash";
+import assign from "lodash/assign";
+import throttle from "lodash/throttle";
 import "spectrum-colorpicker2";
 
 import Theme, { ThemeConfig } from "./Theme";
@@ -24,7 +25,7 @@ class MultiColorPicker extends Widget {
       },
     };
 
-    this.config = _.assign({}, defaults, config);
+    this.config = assign({}, defaults, config);
     this.init();
   }
 
@@ -84,8 +85,8 @@ class MultiColorPicker extends Widget {
       picker.elem.spectrum({
         color: picker.color,
         showInitial: true,
-        change: _.throttle(handleColorPickerChange, 50),
-        move: _.throttle(handleColorPickerChange, 50),
+        change: throttle(handleColorPickerChange, 50),
+        move: throttle(handleColorPickerChange, 50),
       });
     }
 

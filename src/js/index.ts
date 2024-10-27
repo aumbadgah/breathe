@@ -1,5 +1,5 @@
 import $ from "jquery";
-import _ from "lodash";
+import cloneDeep from "lodash/clonedeep";
 
 declare global {
   interface Window {
@@ -75,7 +75,7 @@ import Widget from "./Widget";
   const broadcast = (event: string, original: any) => {
     const handler = "on" + event.charAt(0).toUpperCase() + event.slice(1);
 
-    const deepCopy = _.cloneDeep(original);
+    const deepCopy = cloneDeep(original);
 
     if (typeof state[handler as keyof State] !== "undefined") {
       (state[handler as keyof State] as (value: any) => void)(deepCopy);

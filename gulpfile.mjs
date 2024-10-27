@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import * as dartSass from "sass";
+import TerserPlugin from "terser-webpack-plugin";
 import autoprefixer from "gulp-autoprefixer";
 import browserSync from "browser-sync";
 import cleanCSS from "gulp-clean-css";
@@ -10,12 +11,14 @@ import gulp from "gulp";
 import gulpif from "gulp-if";
 import inject from "gulp-inject";
 import log from "fancy-log";
+import purgecss from "gulp-purgecss";
 import rename from "gulp-rename";
 import replace from "gulp-replace";
 import sass from "gulp-sass";
-import terser from "gulp-terser";
+// import terser from "gulp-terser";
 import webpack from "webpack";
 import webpackStream from "webpack-stream";
+import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 
 const sassCompiler = sass(dartSass);
 const bs = browserSync.create();
@@ -96,6 +99,18 @@ gulp.task("scss", () => {
     .pipe(autoprefixer())
     .pipe(concat("bundle.css"))
     .pipe(replace("../fonts/", "fonts/"))
+    .pipe(
+      gulpif(
+        isProd,
+        purgecss({
+          content: ["src/**/*.html", "src/**/*.ts", "src/**/*.js"],
+          safelist: {
+            standard: [/^fa-/, /^spectrum-/],
+            deep: [/spectrum$/],
+          },
+        })
+      )
+    )
     .pipe(gulpif(isProd, cleanCSS()))
     .pipe(gulp.dest(config.styles.dest))
     .pipe(rename("bundle.css"))
@@ -127,26 +142,56 @@ gulp.task("js", () => {
                   {
                     loader: "babel-loader",
                     options: {
-                      presets: ["@babel/preset-env"],
+                      presets: [
+                        ["@babel/preset-env", { modules: false }],
+                        "@babel/preset-typescript",
+                      ],
+                      plugins: [
+                        [
+                          "transform-imports",
+                          {
+                            lodash: {
+                              transform: "lodash/${member}",
+                              preventFullImport: true,
+                            },
+                          },
+                        ],
+                      ],
                     },
                   },
-                  "ts-loader",
                 ],
                 exclude: /node_modules/,
               },
             ],
+          },
+          optimization: {
+            usedExports: true,
+            minimize: isProd,
+            minimizer: [
+              new TerserPlugin({
+                terserOptions: {
+                  compress: {
+                    drop_console: true,
+                  },
+                },
+              }),
+            ],
+            sideEffects: true,
           },
           plugins: [
             new webpack.ProvidePlugin({
               $: "jquery",
               jQuery: "jquery",
             }),
+            new BundleAnalyzerPlugin({
+              analyzerMode: "static",
+              openAnalyzer: false,
+            }),
           ],
         },
         webpack
       )
     )
-    .pipe(gulpif(isProd, terser()))
     .pipe(gulp.dest(config.scripts.dest));
 });
 

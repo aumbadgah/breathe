@@ -8,6 +8,7 @@ on:
 
 env:
   BRANCH_NAME: ${{ github.base_ref || github.ref_name }}
+  BUILD_DIR: build
   DEBUG: true
 
 jobs:
@@ -27,7 +28,7 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: dist
-          path: build
+          path: ${{ env.BUILD_DIR }}
   push-to-s3:
     runs-on: ubuntu-latest
     needs: build
@@ -35,10 +36,10 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: dist
-          path: build
+          path: ${{ env.BUILD_DIR }}
       - name: Deploy static site to S3 bucket
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           TARGET_S3: ${{ env.BRANCH_NAME == 'master' && 's3://breathe.aumbadgah.com' || 's3://beta.breathe.aumbadgah.com' }}
-        run: aws s3 sync ./dist/ ${{ env.TARGET_S3 }} --delete --region eu-central-1
+        run: aws s3 sync ./${{ env.BUILD_DIR }}/ ${{ env.TARGET_S3 }} --delete --region eu-central-1

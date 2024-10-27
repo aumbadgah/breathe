@@ -1,5 +1,5 @@
 import $ from "jquery";
-import cloneDeep from "lodash/clonedeep";
+import cloneDeep from "lodash/cloneDeep";
 
 declare global {
   interface Window {

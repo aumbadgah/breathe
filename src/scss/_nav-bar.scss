@@ -1,5 +1,5 @@
-@import "mixins";
-@import "variables";
+@use "mixins";
+@use "variables";
 
 .nav-bar {
   &#top-nav {
@@ -13,7 +13,7 @@
     height: 100%;
     width: 5em;
     float: right;
-    @include transition(opacity, $transition-duration);
+    @include mixins.transition(opacity, variables.$transition-duration);
     opacity: 1;
     cursor: pointer;
 
@@ -29,7 +29,7 @@
         transform: translate(-50%, -50%);
       }
       &:hover {
-        @include transition(transform, 0.3s);
+        @include mixins.transition(transform, 0.3s);
         transform: scale(1.3);
       }
     }
@@ -40,7 +40,7 @@
       position: relative;
       margin: auto;
       transform: translate(-50%, -50%);
-      font-size: $font-size-large;
+      font-size: variables.$font-size-large;
     }
     &.active:not(#full) .fa {
       padding: 0.375em;

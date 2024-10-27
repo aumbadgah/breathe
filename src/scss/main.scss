@@ -1,3 +1,14 @@
+@use "variables";
+
+@use "color-picker";
+@use "container";
+@use "container-mobile";
+@use "content-widget";
+@use "control-widget";
+@use "nav-bar";
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
 html,
 body {
   width: 100%;
@@ -18,14 +29,3 @@ body {
     background-image: initial;
   }
 }
-
-@import "variables";
-@import url(https://fonts.googleapis.com/css?family=Open+Sans);
-
-@import "container";
-@import "container_mobile";
-@import "control-widget";
-@import "content-widget";
-@import "nav-bar";
-
-@import "color-picker";

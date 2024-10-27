@@ -1,5 +1,5 @@
-@import "mixins";
-@import "variables";
+@use "mixins";
+@use "variables";
 
 .container.mobile {
   .nav-bar .nav-item {
@@ -11,7 +11,7 @@
       left: 50%;
     }
     .fa {
-      font-size: $font-size-large;
+      font-size: variables.$font-size-large;
     }
   }
 
@@ -25,15 +25,15 @@
         width: 5em;
 
         .fa {
-          font-size: $font-size-large;
+          font-size: variables.$font-size-large;
         }
       }
     }
   }
 
   .control-widget {
-    @include transition(right, $transition-duration);
-    @include transition(z-index, $transition-duration);
+    @include mixins.transition(right, variables.$transition-duration);
+    @include mixins.transition(z-index, variables.$transition-duration);
     right: -33.3%;
     width: 33.3%;
 
@@ -44,7 +44,7 @@
         width: 4.1em;
 
         .fa {
-          font-size: $font-size-large;
+          font-size: variables.$font-size-large;
         }
       }
     }
@@ -67,7 +67,7 @@
 
       .sp-cancel,
       .sp-choose {
-        font-size: $font-size-large;
+        font-size: variables.$font-size-large;
       }
     }
     .sp-palette-row-initial .sp-thumb-el {
@@ -83,7 +83,7 @@
 
   &.full {
     .control-widget {
-      @include transition(right, $transition-duration);
+      @include mixins.transition(right, variables.$transition-duration);
       right: -33.3%;
     }
   }
@@ -92,11 +92,11 @@
   &.list {
     .content-widget,
     .nav-bar {
-      @include transition(width, $transition-duration);
+      @include mixins.transition(width, variables.$transition-duration);
       width: 66.7%;
     }
     .control-widget {
-      @include transition(right, $transition-duration);
+      @include mixins.transition(right, variables.$transition-duration);
       right: 0;
     }
   }

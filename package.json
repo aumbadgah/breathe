@@ -4,7 +4,8 @@
   "description": "Deep breathing assistant",
   "main": "src/js/index.ts",
   "scripts": {
-    "build": "node ./node_modules/gulp/bin/gulp.js",
+    "build": "NODE_ENV=production node ./node_modules/gulp/bin/gulp.js build",
+    "dev": "node ./node_modules/gulp/bin/gulp.js",
     "clean": "node ./node_modules/gulp/bin/gulp.js clean",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

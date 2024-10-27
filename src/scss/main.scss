@@ -20,6 +20,13 @@ body {
 body {
   font-family: arial, sans-serif;
   color: white;
+  position: relative;
+}
+
+.container:not(.mobile) ~ .sp-container {
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%);
 }
 
 .sp-container {

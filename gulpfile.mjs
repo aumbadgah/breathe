@@ -15,7 +15,6 @@ import purgecss from "gulp-purgecss";
 import rename from "gulp-rename";
 import replace from "gulp-replace";
 import sass from "gulp-sass";
-// import terser from "gulp-terser";
 import webpack from "webpack";
 import webpackStream from "webpack-stream";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
@@ -54,6 +53,21 @@ const config = {
     src: "./src/index.html",
     dest: "./build",
   },
+  favicon: {
+    src: "./src/img/favicon",
+  },
+  manifest: {
+    dest: "./build",
+    name: "Breathe - Pilates Oulu",
+    shortName: "Breathe",
+    description: "Breathing app",
+    backgroundColor: "#702929",
+    themeColor: "#ffffff",
+    display: "standalone",
+    orientation: "any",
+    scope: "/",
+    startUrl: "/",
+  },
 };
 
 // Utility function to copy directories
@@ -86,6 +100,81 @@ gulp.task("clean", async () => {
   }
 });
 
+gulp.task("ensure-build-dir", async () => {
+  try {
+    await fs.mkdir(config.buildDir, { recursive: true });
+    log("Build directory ensured");
+  } catch (error) {
+    log.error("Error ensuring build directory:", error);
+  }
+});
+
+async function generateIconsArray(directory) {
+  const files = await fs.readdir(directory);
+  const icons = [];
+
+  for (const file of files) {
+    if (file.endsWith(".png")) {
+      const filePath = path.join(directory, file);
+      const fileStat = await fs.stat(filePath);
+
+      if (fileStat.isFile()) {
+        const match = file.match(/-(\d+)x(\d+)\.png/);
+        if (match) {
+          const size = match[1]; // Assuming square icons
+          icons.push({
+            src: `img/favicon/${file}`,
+            sizes: `${size}x${size}`,
+            type: "image/png",
+          });
+        }
+      }
+    }
+  }
+
+  return icons;
+}
+
+// Generate manifest.json
+gulp.task("manifest", async () => {
+  const {
+    name,
+    shortName: short_name,
+    description,
+    backgroundColor: background_color,
+    themeColor: theme_color,
+    display,
+    orientation,
+    scope,
+    startUrl: start_url,
+  } = config.manifest;
+
+  const icons = await generateIconsArray(config.favicon.src);
+
+  const manifest = {
+    name,
+    short_name,
+    description,
+    background_color,
+    theme_color,
+    display,
+    orientation,
+    scope,
+    start_url,
+    icons,
+  };
+
+  try {
+    await fs.writeFile(
+      path.join(config.manifest.dest, "manifest.json"),
+      JSON.stringify(manifest, null, 2)
+    );
+    log("manifest.json generated");
+  } catch (error) {
+    log.error("Error generating manifest.json:", error);
+  }
+});
+
 // SCSS task
 gulp.task("scss", () => {
   return gulp
@@ -105,7 +194,7 @@ gulp.task("scss", () => {
         purgecss({
           content: ["src/**/*.html", "src/**/*.ts", "src/**/*.js"],
           safelist: {
-            standard: [/^fa-/, /^spectrum-/],
+            standard: [/^fa-/, /^sp-/],
             deep: [/spectrum$/],
           },
         })
@@ -238,6 +327,10 @@ gulp.task("html", () => {
         }
       )
     )
+    .pipe(replace(/img\/favicon\/img\/favicon\//g, "img/favicon/")) // Add this line
+    .pipe(
+      replace("</head>", '<link rel="manifest" href="/manifest.json">\n</head>')
+    )
     .pipe(gulp.dest(config.html.dest))
     .pipe(bs.stream());
 });
@@ -258,7 +351,12 @@ gulp.task("watch", () => {
 // Build task
 gulp.task(
   "build",
-  gulp.series("clean", gulp.parallel("scss", "js", "static", "fonts"), "html")
+  gulp.series(
+    "clean",
+    "ensure-build-dir",
+    gulp.parallel("scss", "js", "static", "fonts", "manifest"),
+    "html"
+  )
 );
 
 // Default task

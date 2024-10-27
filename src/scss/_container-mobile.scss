@@ -50,33 +50,34 @@
     }
   }
 
-  ~ .sp-container {
-    left: initial !important;
-    right: 12.5%;
-  }
-
   #whatsapp {
     display: inline-block;
   }
 
-  ~ .sp-container .sp-picker-container {
-    width: 400px;
+  ~ .sp-container {
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
 
-    .sp-button-container {
-      margin-top: 8px;
+    .sp-picker-container {
+      width: 400px;
 
-      .sp-cancel,
-      .sp-choose {
-        font-size: variables.$font-size-large;
+      .sp-button-container {
+        margin-top: 8px;
+
+        .sp-cancel,
+        .sp-choose {
+          font-size: variables.$font-size-large;
+        }
       }
-    }
-    .sp-palette-row-initial .sp-thumb-el {
-      width: 60px;
-      height: 46px;
-
-      .sp-thumb-inner {
+      .sp-palette-row-initial .sp-thumb-el {
         width: 60px;
         height: 46px;
+
+        .sp-thumb-inner {
+          width: 60px;
+          height: 46px;
+        }
       }
     }
   }

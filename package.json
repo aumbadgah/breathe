@@ -21,7 +21,8 @@
     "jquery": "^3.7.1",
     "lodash": "^4.17.21",
     "modern-normalize": "^3.0.1",
-    "spectrum-colorpicker2": "^2.0.10"
+    "spectrum-colorpicker2": "^2.0.10",
+    "terser-webpack-plugin": "^5.3.10"
   },
   "repository": {
     "type": "git",

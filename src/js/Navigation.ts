@@ -61,23 +61,52 @@ class Navigation extends Widget {
     if (this.available) {
       this.available = false;
 
-      const validUiStates = this.items
-        .filter((navItem) => navItem.type === "nav-item")
-        .map((navItem) => {
-          if (navItem.name === uiState && navItem.elem) {
-            navItem.elem.addClass("active");
-          } else if (navItem.elem) {
-            navItem.elem.removeClass("active");
+      if (uiState === "spooky") {
+        const [spooky] = this.items
+          .filter((navItem) => navItem.type.includes("nav-item"))
+          .filter((navItem) => navItem.name === "spooky");
+
+        if (spooky.elem && !spooky.elem.hasClass("enabled")) {
+          spooky.elem.addClass("enabled");
+        }
+
+        if (spooky.elem && !spooky.elem.hasClass("active")) {
+          spooky.elem.addClass("active");
+          this.config.container.addClass("spooky");
+          this.config.broadcast("startTentacles", null);
+        } else if (spooky.elem && spooky.elem.hasClass("active")) {
+          spooky.elem.removeClass("active");
+          this.config.container.removeClass("spooky");
+        }
+      } else {
+        const validUiStates = this.items
+          .filter((navItem) => navItem.type.includes("nav-item"))
+          .filter((navItem) => navItem.name !== "spooky")
+          .map((navItem) => {
+            if (navItem.name === uiState && navItem.elem) {
+              navItem.elem.addClass("active");
+            } else if (navItem.elem) {
+              navItem.elem.removeClass("active");
+            }
+            return navItem.name;
+          });
+
+        if (uiState === "full") {
+          this.config.container.removeClass("spooky");
+          const [spooky] = this.items
+            .filter((navItem) => navItem.type.includes("nav-item"))
+            .filter((navItem) => navItem.name === "spooky");
+          if (spooky.elem) {
+            spooky.elem.removeClass("active");
           }
-          return navItem.name;
-        });
+        }
 
-      if (validUiStates.indexOf(uiState) >= 0) {
-        this.config.container
-          .removeClass(validUiStates.join(" "))
-          .addClass(uiState);
+        if (validUiStates.indexOf(uiState) >= 0) {
+          this.config.container
+            .removeClass(validUiStates.join(" "))
+            .addClass(uiState);
+        }
       }
-
       setTimeout(() => {
         this.available = true;
       }, 500);
@@ -117,28 +146,14 @@ class Navigation extends Widget {
           type: navItem.type,
         };
 
-        if (navItem.type === "social-item" && navItem.name && navItem.action) {
-          const action = navItem.action;
-          if (item.elem) {
-            item.elem.click(() => {
-              // Vendor.ga("social", navItem.name);
-              this.config.getState("theme", (theme) => {
-                if (typeof theme === "object" && theme !== null) {
-                  action(
-                    JSON.stringify(Theme.getOnlyValidKeys(theme as ThemeConfig))
-                  );
-                }
-              });
-            });
-          }
-        } else if (navItem.type === "nav-item" && navItem.name) {
+        if (navItem.type.includes("nav-item") && navItem.name) {
           if (item.elem)
-            item.elem.click(() => {
+            item.elem.on("click", () => {
               this.config.broadcast("setUiState", navItem.name);
             });
         } else if (navItem.href) {
           if (item.elem)
-            item.elem.click(() => {
+            item.elem.on("click", () => {
               this.config.broadcast("openPage", navItem.href);
               window.open(navItem.href);
             });

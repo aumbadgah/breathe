@@ -13,10 +13,11 @@
   "license": "MIT",
   "browserslist": "> 0.25%, not dead",
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.6.0",
+    "@tweenjs/tween.js": "^25.0.0",
     "@types/d3": "^7.4.3",
     "d3": "^7.9.0",
     "fancy-log": "^2.0.0",
-    "font-awesome": "^4.7.0",
     "glob": "^11.0.0",
     "gulp-autoprefixer": "^9.0.0",
     "gulp-concat": "^2.6.1",

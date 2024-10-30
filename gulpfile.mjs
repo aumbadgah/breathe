@@ -31,7 +31,7 @@ const config = {
   styles: {
     src: [
       "./node_modules/modern-normalize/modern-normalize.css",
-      "./node_modules/font-awesome/css/font-awesome.min.css",
+      "./node_modules/@fortawesome/fontawesome-free/css/all.min.css",
       "./node_modules/spectrum-colorpicker2/dist/spectrum.css",
       "./src/scss/main.scss",
     ],
@@ -46,8 +46,8 @@ const config = {
     dest: "./build/img",
   },
   fonts: {
-    src: "./node_modules/font-awesome/fonts",
-    dest: "./build/css/fonts",
+    src: "./node_modules/@fortawesome/fontawesome-free/webfonts",
+    dest: "./build/webfonts",
   },
   html: {
     src: "./src/index.html",

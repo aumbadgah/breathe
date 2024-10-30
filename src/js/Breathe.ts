@@ -17,7 +17,34 @@ class Breathe extends Widget {
     bellows?: d3.Selection<SVGEllipseElement, unknown, HTMLElement, null>;
     center?: d3.Selection<SVGEllipseElement, unknown, HTMLElement, null>;
   };
+  isFirstLoop: boolean = true;
   isThemeSet: boolean = false;
+
+  delay = 420;
+  duration = 5700;
+
+  dimensions = {
+    bellows: {
+      empty: {
+        rx: 0.29,
+        ry: 0.23,
+      },
+      full: {
+        rx: 0.55,
+        ry: 0.55,
+      },
+    },
+    center: {
+      empty: {
+        rx: 0.26,
+        ry: 0.2,
+      },
+      full: {
+        rx: 0.24,
+        ry: 0.18,
+      },
+    },
+  };
 
   constructor(id: string, config: Partial<BreatheProps>) {
     super(id);
@@ -61,84 +88,126 @@ class Breathe extends Widget {
     return this;
   }
 
-  private loop(): void {
-    const delay = 420;
-    const duration = 5700;
-    let rdy = 0;
+  async transitionFill() {
+    if (!this.width || !this.height) {
+      return;
+    }
 
-    const ready = () => {
-      if (++rdy === 3) {
-        this.loop();
-      }
-    };
+    const { backgroundFull, bellowsFull, centerFull } = this.config.theme;
 
-    if (!this.width || !this.height) return;
+    return Promise.all([
+      new Promise((resolve) => {
+        if (!backgroundFull) {
+          return;
+        }
 
-    const {
-      backgroundEmpty,
-      backgroundFull,
-      bellowsEmpty,
-      bellowsFull,
-      centerEmpty,
-      centerFull,
-    } = this.config.theme;
-
-    if (!backgroundEmpty || !backgroundFull) return;
-
-    this.elements.background
-      ?.transition()
-      .delay(delay)
-      .duration(duration)
-      .attr("fill", backgroundFull)
-      .on("end", () => {
         this.elements.background
           ?.transition()
-          .duration(duration)
+          .delay(this.delay)
+          .duration(this.duration)
+          .attr("fill", backgroundFull)
+          .on("end", resolve);
+      }),
+      new Promise((resolve) => {
+        if (!this.width || !this.height || !bellowsFull) {
+          return;
+        }
+
+        this.elements.bellows
+          ?.transition()
+          .delay(this.delay)
+          .duration(this.duration)
+          .ease(d3.easeCubicInOut)
+          .attr("fill", bellowsFull)
+          .attr("rx", this.width * this.dimensions.bellows.full.rx)
+          .attr("ry", this.height * this.dimensions.bellows.full.ry)
+          .on("end", resolve);
+      }),
+      new Promise((resolve) => {
+        if (!this.width || !this.height || !centerFull) {
+          return;
+        }
+
+        this.elements.center
+          ?.transition()
+          .delay(this.delay)
+          .duration(this.duration)
+          .attr("fill", centerFull)
+          .attr("rx", this.width * this.dimensions.center.full.rx)
+          .attr("ry", this.height * this.dimensions.center.full.ry)
+          .on("end", resolve);
+      }),
+    ]);
+  }
+
+  async transitionEmpty() {
+    if (!this.width || !this.height) {
+      return;
+    }
+
+    const { backgroundEmpty, bellowsEmpty, centerEmpty } = this.config.theme;
+
+    if (this.isFirstLoop) {
+      setTimeout(() => {
+        this.config.broadcast("setUiState", "spooky");
+      }, this.duration / 2);
+    }
+
+    return Promise.all([
+      new Promise((resolve) => {
+        if (!backgroundEmpty) {
+          return;
+        }
+        this.elements.background
+          ?.transition()
+          .duration(this.duration)
           .attr("fill", backgroundEmpty)
-          .on("end", ready);
-      });
+          .on("end", resolve);
+      }),
+      new Promise((resolve) => {
+        if (!this.width || !this.height || !bellowsEmpty) {
+          return;
+        }
 
-    if (!bellowsEmpty || !bellowsFull) return;
-
-    this.elements.bellows
-      ?.transition()
-      .delay(delay)
-      .duration(duration)
-      .ease(d3.easeCubicInOut)
-      .attr("fill", bellowsFull)
-      .attr("rx", this.width * 0.55)
-      .attr("ry", this.height * 0.55)
-      .on("end", () => {
-        if (!this.width || !this.height) return;
         this.elements.bellows
           ?.transition()
           .ease(d3.easeCubicInOut)
-          .duration(duration)
+          .duration(this.duration)
           .attr("fill", bellowsEmpty)
-          .attr("rx", this.width * 0.29)
-          .attr("ry", this.height * 0.23)
-          .on("end", ready);
-      });
+          .attr("rx", this.width * this.dimensions.bellows.empty.rx)
+          .attr("ry", this.height * this.dimensions.bellows.empty.ry)
+          .on("end", resolve);
+      }),
+      new Promise((resolve) => {
+        if (!this.width || !this.height || !centerEmpty) {
+          return;
+        }
 
-    if (!centerEmpty || !centerFull) return;
-
-    this.elements.center
-      ?.transition()
-      .delay(delay)
-      .duration(duration)
-      .attr("fill", centerFull)
-      .attr("rx", this.width * 0.24)
-      .attr("ry", this.height * 0.18)
-      .on("end", () => {
-        if (!this.width || !this.height) return;
         this.elements.center
           ?.transition()
-          .duration(duration)
+          .duration(this.duration)
           .attr("fill", centerEmpty)
-          .attr("rx", this.width * 0.26)
-          .attr("ry", this.height * 0.2)
-          .on("end", ready);
-      });
+          .attr("rx", this.width * this.dimensions.center.empty.rx)
+          .attr("ry", this.height * this.dimensions.center.empty.ry)
+          .on("end", resolve);
+      }),
+    ]);
+  }
+
+  private async loop() {
+    const transitions = [
+      this.transitionFill.bind(this),
+      this.transitionEmpty.bind(this),
+    ];
+
+    for (const transition of transitions) {
+      await transition();
+    }
+
+    if (this.isFirstLoop) {
+      this.isFirstLoop = false;
+    }
+    this.loop();
   }
 
   private init(): void {
@@ -169,8 +238,8 @@ class Breathe extends Widget {
     this.elements.bellows = this.svg
       .append("ellipse")
       .attr("id", "bellows")
-      .attr("rx", this.width * 0.29)
-      .attr("ry", this.height * 0.23)
+      .attr("rx", this.width * this.dimensions.bellows.empty.rx)
+      .attr("ry", this.height * this.dimensions.bellows.empty.ry)
       .attr("fill", bellowsEmpty)
       .attr("cx", "50%")
       .attr("cy", "50%");
@@ -178,8 +247,8 @@ class Breathe extends Widget {
     this.elements.center = this.svg
       .append("ellipse")
       .attr("id", "center")
-      .attr("rx", this.width * 0.26)
-      .attr("ry", this.height * 0.2)
+      .attr("rx", this.width * this.dimensions.center.empty.rx)
+      .attr("ry", this.height * this.dimensions.center.empty.ry)
       .attr("fill", centerEmpty)
       .attr("cx", "50%")
       .attr("cy", "50%");

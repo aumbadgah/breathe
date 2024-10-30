@@ -91,16 +91,6 @@ class Navigation extends Widget {
             return navItem.name;
           });
 
-        // if (uiState === "full") {
-        //   this.config.container.removeClass("spooky");
-        //   const [spooky] = this.items
-        //     .filter((navItem) => navItem.type.includes("nav-item"))
-        //     .filter((navItem) => navItem.name === "spooky");
-        //   if (spooky.elem) {
-        //     spooky.elem.removeClass("active");
-        //   }
-        // }
-
         if (validUiStates.indexOf(uiState) >= 0) {
           this.config.container
             .removeClass(validUiStates.join(" "))

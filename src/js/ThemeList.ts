@@ -159,7 +159,7 @@ class ThemeList extends Widget {
           );
       });
       let control = $(
-        '<span><i class="fa fa-times-circle" aria-hidden="true"></i></span>',
+        '<span><i class="fa fa-regular fa-circle-xmark" aria-hidden="true"></i></span>',
         {
           id: "theme-remove-" + slug,
         }

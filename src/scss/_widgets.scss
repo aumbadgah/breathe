@@ -1,0 +1,95 @@
+@use "variables";
+
+.widgets,
+.widget {
+  width: 100%;
+  height: 100%;
+}
+
+.widget {
+  display: inline-block;
+}
+
+.content-widget,
+.control-widget {
+  position: absolute;
+}
+
+.content-widget {
+  &#tentacles {
+    top: 0;
+    left: 0;
+
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.5s;
+
+    canvas {
+      height: 100% !important;
+      width: 100% !important;
+    }
+  }
+}
+
+.container.spooky {
+  .content-widget#tentacles {
+    opacity: 1;
+  }
+}
+
+.control-widget {
+  transition-property: right, z-index;
+  transition-duration: 0.5s;
+  right: -20%;
+  z-index: variables.$zIndexControlWidgetOnBottom;
+
+  width: 20%;
+  background-color: white;
+}
+
+.container.full {
+  .content-widget {
+    transition-property: width;
+    transition-duration: 0.5s;
+    width: 100%;
+  }
+  .control-widget {
+    transition-property: right;
+    transition-duration: 0.5s;
+    right: -20%;
+  }
+  .nav-bar {
+    transition-property: width;
+    transition-duration: 0.5s;
+    width: 100%;
+  }
+  .nav-item#full {
+    transition-property: opacity;
+    transition-duration: 0.5s;
+    opacity: 0.45;
+  }
+}
+
+.container.colorpicker,
+.container.list {
+  .content-widget {
+    transition-property: width;
+    transition-duration: 0.5s;
+    width: 80.1%;
+  }
+  .control-widget {
+    transition-property: right;
+    transition-duration: 0.5s;
+    right: 0;
+  }
+  .nav-bar {
+    transition-property: width;
+    transition-duration: 0.5s;
+    width: 80%;
+  }
+}
+
+.container.colorpicker #multi-color-picker,
+.container.list #list {
+  z-index: variables.$zIndexControlWidgetOnTop;
+}

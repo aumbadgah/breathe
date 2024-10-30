@@ -54,7 +54,7 @@ class MultiColorPicker extends Widget {
         height: `${(100 / Object.keys(this.config.theme).length) * 0.93}%`,
       });
       const icon = $(
-        '<span><i class="fa fa-ellipsis-h" aria-hidden="true"></i></span>'
+        '<span><i class="fa-solid fa-ellipsis" aria-hidden="true"></i></span>'
       ).addClass("color-picker-icon");
       const picker = {
         elem: $("<div>", {
@@ -100,7 +100,7 @@ class MultiColorPicker extends Widget {
         this.showStatus();
       },
     }).append(
-      $('<i class="fa fa-floppy-o" aria-hidden="true"></i>', {
+      $('<i class="fa fa-solid fa-floppy-disk" aria-hidden="true"></i>', {
         id: "control-save-theme",
       })
     );

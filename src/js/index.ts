@@ -21,12 +21,14 @@ import State from "./State";
 import Theme from "./Theme";
 import ThemeList from "./ThemeList";
 import Widget from "./Widget";
+import Tentacles from "./Tentacles";
 
 (function ($) {
   const template =
     '<div id="container" class="container">' +
     '<div class="widgets">' +
     '<div class="widget content-widget" id="breathe"></div>' +
+    '<div class="widget content-widget" id="tentacles"></div>' +
     '<div class="widget control-widget" id="multi-color-picker"></div>' +
     '<div class="widget control-widget" id="theme-list"></div>' +
     "</div>" +
@@ -38,19 +40,28 @@ import Widget from "./Widget";
     id: "#bottom-nav",
     items: [
       {
+        name: "spooky",
+        fa: "fa-solid fa-ghost",
+        // fa: "fa-bath",
+        type: "nav-item left",
+      },
+      {
         name: "list",
-        fa: "fa-list-ul",
+        // fa: "fa-list-ul",
+        fa: "fa-solid fa-list-ul",
         type: "nav-item",
       },
       {
         name: "colorpicker",
-        fa: "fa-paint-brush",
+        // fa: "fa-paint-brush",
+        fa: "fa-solid fa-paintbrush",
         type: "nav-item",
       },
       {
         name: "full",
         id: "full",
-        fa: "fa-desktop",
+        // fa: "fa-desktop",
+        fa: "fa-solid fa-desktop",
         type: "nav-item",
       },
     ],
@@ -72,10 +83,10 @@ import Widget from "./Widget";
   let state: State;
   let widgets: Widget[] = [];
 
-  const broadcast = (event: string, original: any) => {
+  const broadcast = (event: string, originalPayload: any) => {
     const handler = "on" + event.charAt(0).toUpperCase() + event.slice(1);
 
-    const deepCopy = cloneDeep(original);
+    const deepCopy = cloneDeep(originalPayload);
 
     if (typeof state[handler as keyof State] !== "undefined") {
       (state[handler as keyof State] as (value: any) => void)(deepCopy);
@@ -108,6 +119,9 @@ import Widget from "./Widget";
       }),
       new Breathe("#breathe", {
         theme: currentTheme,
+        broadcast: broadcast,
+      }),
+      new Tentacles("#tentacles", {
         broadcast: broadcast,
       }),
       new ThemeList("#theme-list", {

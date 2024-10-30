@@ -1,4 +1,5 @@
 import $ from "jquery";
+import { throttle } from "lodash";
 
 class Widget {
   elem?: JQuery<HTMLElement>;
@@ -18,11 +19,7 @@ class Widget {
       if (this.elem) this.height = this.elem.height() || 0;
       if (this.elem) this.width = this.elem.width() || 0;
     };
-
-    window.addEventListener("resize", () => {
-      setBaseMeasures();
-    });
-
+    window.addEventListener("resize", throttle(setBaseMeasures, 5));
     setBaseMeasures();
 
     return this;

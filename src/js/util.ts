@@ -1,50 +1,5 @@
 import Config from "./Config";
 
-/**
- * @license
- *
- * http://www.sitepoint.com/how-to-deal-with-cookies-in-javascript/
- * http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
- *
- * modified
- *
- **/
-
-/**
- * @license
- *
- * http://stackoverflow.com/questions/2219526/how-many-bytes-in-a-javascript-string
- *
- **/
-
-/**
- * @license
- *
- * http://stackoverflow.com/questions/1349404/generate-a-string-of-5-random-characters-in-javascript
- *
- **/
-
-/**
- * @license
- *
- * http://stackoverflow.com/questions/11381673/detecting-a-mobile-browser
- *
- **/
-
-/**
- * @license
- *
- * http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
- *
- **/
-
-/**
- * @license
- *
- * http://stackoverflow.com/questions/8027423/how-to-check-if-a-string-is-a-valid-hex-color-representation
- *
- **/
-
 export const isLocal = () => {
   return window.location.href.indexOf("localhost") >= 0;
 };

@@ -1,7 +1,7 @@
 import Config from "./Config";
 import Theme, { ThemeConfig } from "./Theme";
 import Widget from "./Widget";
-import { getCookie, setCookie, getSlug } from "./util";
+import { setCookie, getSlug } from "./util";
 
 interface ThemeListConfig {
   themes: Theme[];
@@ -10,7 +10,6 @@ interface ThemeListConfig {
 
 class ThemeList extends Widget {
   private themes: Theme[] = [];
-  private cookie: Theme[] = [];
   private config: ThemeListConfig;
 
   constructor(id: string, config: Partial<ThemeListConfig>) {
@@ -23,22 +22,6 @@ class ThemeList extends Widget {
 
     this.config = { ...defaults, ...config };
     this.init();
-  }
-
-  static parse(cookie: string): Theme[] {
-    try {
-      const parsedCookie = JSON.parse(cookie);
-      if (Array.isArray(parsedCookie)) {
-        const themes = parsedCookie.map((theme) => {
-          return new Theme(theme);
-        });
-        return themes;
-      } else {
-        return [];
-      }
-    } catch (_) {
-      return [];
-    }
   }
 
   onSetTheme(paramTheme: ThemeConfig): this {
@@ -57,17 +40,9 @@ class ThemeList extends Widget {
   }
 
   read(): this {
-    const rawCookie = getCookie(Config.cookieName);
-
-    if (rawCookie) {
-      this.cookie = ThemeList.parse(rawCookie);
-    }
-
-    const storedThemes = ThemeList.validate(this.cookie);
-
-    const shuffledThemes = [
-      ...(storedThemes.length === 0 ? this.config.themes : storedThemes),
-    ].sort(() => Math.random() - 0.5);
+    const shuffledThemes = [...this.config.themes].sort(
+      () => Math.random() - 0.5
+    );
     for (let i = shuffledThemes.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffledThemes[i], shuffledThemes[j]] = [
@@ -87,12 +62,6 @@ class ThemeList extends Widget {
   save(): this {
     this.themes = ThemeList.validate(this.themes);
     this.themes = this.themes.slice(0, 8);
-
-    const cookieValue = JSON.stringify(
-      this.themes.map((theme) => theme.values)
-    );
-
-    setCookie(Config.cookieName, cookieValue);
 
     return this;
   }
@@ -149,36 +118,45 @@ class ThemeList extends Widget {
           this.config.broadcast("setTheme", theme.values);
         },
       });
-      const keys = Theme.getValidKeys();
-      keys.forEach((key) => {
-        theme.elem &&
-          theme.elem.append(
-            $("<div>", {
-              class: "color-item",
-            }).css("background-color", theme.values[key])
-          );
-      });
-      let control = $(
+
+      Theme.getValidKeys()
+        .map((key) =>
+          $("<div>", {
+            class: "color-item",
+          }).css("background-color", theme.values[key])
+        )
+        .forEach((elemThemeColor) => {
+          theme.elem && theme.elem.append(elemThemeColor);
+        });
+
+      const controlRemoveTheme = $(
         '<span><i class="fa fa-regular fa-circle-xmark" aria-hidden="true"></i></span>',
         {
           id: "theme-remove-" + slug,
         }
       )
         .addClass("control")
-        .click((e) => {
+        .on("click", (e) => {
           e.preventDefault();
           this.removeTheme(theme);
         });
-      theme.elem.append(control);
+
+      theme.elem.append(controlRemoveTheme);
       if (this.elem) this.elem.append(theme.elem);
     });
 
-    if (this.elem)
-      this.elem.append(
-        $(
-          '<div class="credits"><a target="_blank" href="https://aumbadgah.com">aumbadgah</a></div>'
-        )
-      );
+    const reset = $(
+      '<div class="reset"><i class="fa fa-solid fa-rotate" aria-hidden="true"></i></div>'
+    ).on("click", (e) => {
+      e.preventDefault();
+      this.init();
+    });
+
+    const credits = $(
+      '<div class="credits"><a target="_blank" href="https://aumbadgah.com">aumbadgah</a></div>'
+    );
+
+    if (this.elem) this.elem.append(reset).append(credits);
 
     return this;
   }

@@ -18,10 +18,10 @@ import Config from "./Config";
 import MultiColorPicker from "./MultiColorPicker";
 import Navigation from "./Navigation";
 import State from "./State";
+import Tentacles from "./Tentacles";
 import Theme from "./Theme";
 import ThemeList from "./ThemeList";
 import Widget from "./Widget";
-import Tentacles from "./Tentacles";
 
 (function ($) {
   const template =
@@ -42,25 +42,21 @@ import Tentacles from "./Tentacles";
       {
         name: "spooky",
         fa: "fa-solid fa-ghost",
-        // fa: "fa-bath",
         type: "nav-item left",
       },
       {
         name: "list",
-        // fa: "fa-list-ul",
         fa: "fa-solid fa-list-ul",
         type: "nav-item",
       },
       {
         name: "colorpicker",
-        // fa: "fa-paint-brush",
         fa: "fa-solid fa-paintbrush",
         type: "nav-item",
       },
       {
         name: "full",
         id: "full",
-        // fa: "fa-desktop",
         fa: "fa-solid fa-desktop",
         type: "nav-item",
       },
@@ -98,13 +94,10 @@ import Tentacles from "./Tentacles";
   };
 
   const getState = function (property: keyof State, cb: (value: any) => void) {
-    // Vendor.ga("getState", property);
     cb(state[property]);
   };
 
   const init = () => {
-    // Vendor.init();
-
     $("body").html(template);
 
     state = new State({

@@ -77,6 +77,9 @@ class Navigation extends Widget {
         } else if (spooky.elem && spooky.elem.hasClass("active")) {
           spooky.elem.removeClass("active");
           this.config.container.removeClass("spooky");
+          setTimeout(() => {
+            this.config.broadcast("stopTentacles", null);
+          }, 500);
         }
       } else {
         const validUiStates = this.items

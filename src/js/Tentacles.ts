@@ -70,8 +70,15 @@ class Tentacle {
     this.strokeColor = colors.stroke;
     this.lineWidth = 0.25;
     this.segmentCount = Random.int(80, 220);
-    this.thickness = Random.float(10, 50);
-    this.spacing = Random.float(2.0, 6.0);
+
+    if (Random.bool(0.05)) {
+      this.thickness = Random.float(20, 100);
+      this.spacing = Random.float(4.0, 12.0);
+    } else {
+      this.thickness = Random.float(10, 50);
+      this.spacing = Random.float(2.0, 6.0);
+    }
+
     this.curl = Random.float(0.1, 0.85);
     this.step = Random.float(0.01, 0.075);
     this._length = 0;
@@ -122,7 +129,7 @@ class Tentacle {
 // Scene
 // ——————————————————————————————————————————————————
 
-const MAX_TENTACLES = 12;
+const MAX_TENTACLES = 10;
 type TentacleColors = {
   fill: string;
   stroke: string;
@@ -180,14 +187,26 @@ class Scene {
 
     this.activeTweens.push(tween);
 
+    if (this.activeTweens.length > MAX_TENTACLES * 3) {
+      this.activeTweens = this.activeTweens.slice(-MAX_TENTACLES * 3);
+    }
+
     if (this.tentacles.length < MAX_TENTACLES) {
       const delay = Random.int(100, 1000);
       setTimeout(this.addTentacle, delay);
     }
   }
 
+  stopUpdateLoop() {
+    this.isRunning = false;
+    this.activeTweens.forEach((tween) => tween.stop());
+    this.tentacles = [];
+    this.activeTweens = [];
+  }
+
   startUpdateLoop() {
     const update = () => {
+      if (!this.isRunning) return;
       requestAnimationFrame(update);
       this.activeTweens.forEach((tween) => tween.update());
     };
@@ -219,7 +238,7 @@ class Scene {
 
 const TAU = Math.PI * 2;
 const HPI = Math.PI / 2;
-const BACKGROUND_COLOR = "rgba(0, 0, 0, 0)";
+const FADE_OVERLAY = "rgba(255, 255, 255, 0.0)";
 const CLEAR_INTERVAL = 15.0;
 class Renderer {
   width: number;
@@ -244,8 +263,8 @@ class Renderer {
     this.context.clearRect(0, 0, this.width, this.height);
     new Tween(self)
       .to({ clearAlpha: 0.08 }, 2 * 1000)
-      .pause(CLEAR_INTERVAL * 1000)
       .easing(Easing.Sinusoidal.Out)
+      .pause(CLEAR_INTERVAL * 1000)
       .onComplete(() => {
         new Tween(self)
           .to({ clearAlpha: 0.01 }, 1 * 1000)
@@ -256,11 +275,10 @@ class Renderer {
 
   render(scene: Scene) {
     this.context.globalAlpha = this.clearAlpha;
-    this.context.fillStyle = BACKGROUND_COLOR;
+    this.context.fillStyle = FADE_OVERLAY;
     this.context.fillRect(0, 0, this.width, this.height);
     this.context.globalAlpha = 1;
 
-    // Render only the current tentacles
     scene.tentacles.forEach((tentacle) => {
       this.renderTentacle(tentacle);
     });
@@ -319,8 +337,6 @@ class Renderer {
     this.canvas.style.width = width + "px";
     this.canvas.style.height = height + "px";
     this.context.scale(scale, scale);
-    this.context.fillStyle = BACKGROUND_COLOR;
-    this.context.fillRect(0, 0, width, height);
   }
 }
 
@@ -333,6 +349,7 @@ export default class Tentacles extends Widget {
   private isInitialised: boolean = false;
   private isRunning: boolean = false;
   private isThemeSet: boolean = false;
+  private animationFrameId?: number;
 
   constructor(id: string, { broadcast }: TentaclesProps) {
     super(id);
@@ -361,12 +378,20 @@ export default class Tentacles extends Widget {
   }
 
   render() {
-    requestAnimationFrame(this.render.bind(this));
+    this.animationFrameId = requestAnimationFrame(this.render.bind(this));
     if (!this.renderer || !this.scene) return;
     this.renderer.render(this.scene);
   }
 
-  public onStopTentacles() {}
+  public onStopTentacles() {
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = undefined;
+    }
+    this.scene?.stopUpdateLoop();
+    this.renderer?.clear();
+    this.isRunning = false;
+  }
 
   public onStartTentacles() {
     if (!this.isInitialised) {

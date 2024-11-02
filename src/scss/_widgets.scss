@@ -21,7 +21,7 @@
     left: 0;
 
     opacity: 0;
-    transition-property: opacity;
+    transition-property: left, opacity;
     transition-duration: 0.5s;
 
     canvas {
@@ -76,6 +76,11 @@
     transition-property: width;
     transition-duration: 0.5s;
     width: 80.1%;
+
+    &#tentacles {
+      left: calc((80.1% - 100%) / 2);
+      width: 100%;
+    }
   }
   .control-widget {
     transition-property: right;

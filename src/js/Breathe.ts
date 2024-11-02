@@ -148,9 +148,18 @@ class Breathe extends Widget {
     const { backgroundEmpty, bellowsEmpty, centerEmpty } = this.config.theme;
 
     if (this.isFirstLoop) {
-      setTimeout(() => {
-        this.config.broadcast("setUiState", "spooky");
-      }, this.duration / 2);
+      const today = new Date();
+      const month = today.getMonth(); // 0-based: October is 9, November is 10
+      const day = today.getDate();
+
+      const isHalloweenSeason =
+        (month === 9 && day >= 15) || (month === 10 && day <= 15);
+
+      if (isHalloweenSeason) {
+        setTimeout(() => {
+          this.config.broadcast("setUiState", "spooky");
+        }, this.duration / 2);
+      }
     }
 
     return Promise.all([

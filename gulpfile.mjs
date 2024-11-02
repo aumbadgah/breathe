@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 
@@ -70,7 +71,6 @@ const config = {
   },
 };
 
-// Utility function to copy directories
 async function copyDir(src, dest) {
   try {
     await fs.mkdir(dest, { recursive: true });
@@ -201,8 +201,15 @@ gulp.task("scss", () => {
       )
     )
     .pipe(gulpif(isProd, cleanCSS()))
-    .pipe(gulp.dest(config.styles.dest))
-    .pipe(rename("bundle.css"))
+    .pipe(
+      gulpif(
+        isProd,
+        rename((path) => {
+          const timestamp = Date.now();
+          path.basename = `bundle.${timestamp}`;
+        })
+      )
+    )
     .pipe(gulp.dest(config.styles.dest))
     .pipe(bs.stream());
 });
@@ -218,7 +225,7 @@ gulp.task("js", () => {
           devtool: isProd ? false : "source-map",
           entry: config.scripts.src,
           output: {
-            filename: "bundle.js",
+            filename: isProd ? "bundle.[contenthash].js" : "bundle.js",
           },
           resolve: {
             extensions: [".ts", ".js", ".json"],
@@ -308,19 +315,16 @@ gulp.task("fonts", async () => {
 
 // Inject CSS and JS into HTML
 gulp.task("html", () => {
+  const jsPattern = `${config.scripts.dest}/bundle${isProd ? ".*" : ""}.js`;
+  const cssPattern = `${config.styles.dest}/bundle${isProd ? ".*" : ""}.css`;
+
   return gulp
     .src(config.html.src)
     .pipe(
       inject(
-        gulp.src(
-          [
-            `${config.scripts.dest}/bundle.js`,
-            `${config.styles.dest}/bundle.css`,
-          ],
-          {
-            read: false,
-          }
-        ),
+        gulp.src([jsPattern, cssPattern], {
+          read: false,
+        }),
         {
           ignorePath: config.buildDir.slice(2),
           addRootSlash: false,

@@ -13,6 +13,41 @@
   &#bottom-nav {
     bottom: 0;
   }
+  &#right-nav {
+    height: calc(100% - (4em * 2));
+    width: 5em;
+    top: 4em;
+    right: 0;
+    left: initial;
+    padding-top: calc(100% - 15em);
+    transition-property: right !important;
+    transition-duration: 0.5s !important;
+
+    .nav-item {
+      height: 5em;
+      position: relative;
+
+      &#breathe-medium i {
+        opacity: 0.7;
+      }
+      &#breathe-long i {
+        opacity: 0.35;
+      }
+
+      .label {
+        left: -4em;
+        top: 1.5em;
+        font-size: 1.3em;
+        opacity: 0;
+        transition-property: opacity;
+        transition-duration: 0.2s;
+
+        &.visible {
+          opacity: 1;
+        }
+      }
+    }
+  }
 
   .nav-item {
     height: 100%;
@@ -53,6 +88,10 @@
     &.active:not(#full) .fa {
       padding: 0.375em;
       background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .label {
+      position: absolute;
     }
   }
 }

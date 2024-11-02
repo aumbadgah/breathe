@@ -1,8 +1,7 @@
 import $ from "jquery";
 import State from "./State";
-import Theme, { ThemeConfig } from "./Theme";
-// import Vendor from "./Vendor";
 import Widget from "./Widget";
+import { forEach } from "lodash";
 
 interface NavItem {
   name: string;
@@ -10,9 +9,8 @@ interface NavItem {
   elem?: JQuery;
   imgSrc?: string;
   fa?: string;
-  id?: string;
-  action?: (theme: string) => void;
   href?: string;
+  label?: string;
 }
 
 interface NavbarConfig {
@@ -58,13 +56,21 @@ class Navigation extends Widget {
   }
 
   onSetUiState(uiState: string): this {
+    const toggleNavItemState = (navItem: NavItem) => {
+      if (navItem.elem) {
+        navItem.name === uiState
+          ? navItem.elem.addClass("active")
+          : navItem.elem.removeClass("active");
+      }
+    };
+
     if (this.available) {
       this.available = false;
 
       if (uiState === "spooky") {
-        const [spooky] = this.items
-          .filter((navItem) => navItem.type.includes("nav-item"))
-          .filter((navItem) => navItem.name === "spooky");
+        const [spooky] = this.items.filter(
+          (navItem) => navItem.name === "spooky"
+        );
 
         if (spooky.elem && !spooky.elem.hasClass("enabled")) {
           spooky.elem.addClass("enabled");
@@ -77,17 +83,47 @@ class Navigation extends Widget {
         } else if (spooky.elem && spooky.elem.hasClass("active")) {
           spooky.elem.removeClass("active");
           this.config.container.removeClass("spooky");
+          setTimeout(() => {
+            this.config.broadcast("stopTentacles", null);
+          }, 500);
         }
+      } else if (
+        uiState === "breathe-short" ||
+        uiState === "breathe-medium" ||
+        uiState === "breathe-long"
+      ) {
+        this.config.broadcast(
+          "setBreatheDuration",
+          uiState.replace("breathe-", "")
+        );
+
+        this.items
+          .filter((navItem) =>
+            ["breathe-short", "breathe-medium", "breathe-long"].includes(
+              navItem.name
+            )
+          )
+          .forEach((navItem) => {
+            if (navItem.elem) {
+              if (navItem.name === uiState) {
+                navItem.elem.addClass("active");
+                const label = navItem.elem.find(".label");
+                label.addClass("visible");
+                setTimeout(() => {
+                  label.removeClass("visible");
+                }, 1000);
+              } else {
+                navItem.elem.removeClass("active");
+              }
+            }
+          });
       } else {
         const validUiStates = this.items
-          .filter((navItem) => navItem.type.includes("nav-item"))
-          .filter((navItem) => navItem.name !== "spooky")
+          .filter((navItem) =>
+            ["full", "list", "colorpicker"].includes(navItem.name)
+          )
           .map((navItem) => {
-            if (navItem.name === uiState && navItem.elem) {
-              navItem.elem.addClass("active");
-            } else if (navItem.elem) {
-              navItem.elem.removeClass("active");
-            }
+            toggleNavItemState(navItem);
             return navItem.name;
           });
 
@@ -120,15 +156,10 @@ class Navigation extends Widget {
           throw new Error("No icon found for nav item");
         }
 
-        const itemConfig: JQuery.PlainObject = {
-          class: "nav-item",
-        };
-        if (navItem.id) {
-          itemConfig.id = navItem.id;
-        }
-
         const item: NavItem = {
-          elem: $("<div>", itemConfig)
+          elem: $("<div>", {
+            class: "nav-item",
+          })
             .addClass(navItem.type)
             .attr("id", navItem.name)
             .append(icon),
@@ -136,10 +167,24 @@ class Navigation extends Widget {
           type: navItem.type,
         };
 
+        if (navItem.label) {
+          const label = $(`<span>`, {
+            class: "label",
+          }).text(navItem.label);
+          item.elem?.append(label);
+        }
+
         if (navItem.type.includes("nav-item") && navItem.name) {
           if (item.elem)
-            item.elem.on("click", () => {
-              this.config.broadcast("setUiState", navItem.name);
+            item.elem.on("click", (event) => {
+              const elem = $(event.currentTarget);
+              if (elem.attr("id") === "spooky") {
+                if (elem.hasClass("enabled")) {
+                  this.config.broadcast("setUiState", navItem.name);
+                }
+              } else {
+                this.config.broadcast("setUiState", navItem.name);
+              }
             });
         } else if (navItem.href) {
           if (item.elem)

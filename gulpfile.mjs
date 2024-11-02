@@ -70,7 +70,6 @@ const config = {
   },
 };
 
-// Utility function to copy directories
 async function copyDir(src, dest) {
   try {
     await fs.mkdir(dest, { recursive: true });
@@ -90,7 +89,6 @@ async function copyDir(src, dest) {
   }
 }
 
-// Clean build folder
 gulp.task("clean", async () => {
   try {
     await fs.rm(config.buildDir, { recursive: true, force: true });
@@ -135,7 +133,6 @@ async function generateIconsArray(directory) {
   return icons;
 }
 
-// Generate manifest.json
 gulp.task("manifest", async () => {
   const {
     name,
@@ -175,7 +172,6 @@ gulp.task("manifest", async () => {
   }
 });
 
-// SCSS task
 gulp.task("scss", () => {
   return gulp
     .src(config.styles.src)
@@ -201,13 +197,19 @@ gulp.task("scss", () => {
       )
     )
     .pipe(gulpif(isProd, cleanCSS()))
-    .pipe(gulp.dest(config.styles.dest))
-    .pipe(rename("bundle.css"))
+    .pipe(
+      gulpif(
+        isProd,
+        rename((path) => {
+          const timestamp = Date.now();
+          path.basename = `bundle.${timestamp}`;
+        })
+      )
+    )
     .pipe(gulp.dest(config.styles.dest))
     .pipe(bs.stream());
 });
 
-// JS task
 gulp.task("js", () => {
   return gulp
     .src(config.scripts.src)
@@ -218,7 +220,7 @@ gulp.task("js", () => {
           devtool: isProd ? false : "source-map",
           entry: config.scripts.src,
           output: {
-            filename: "bundle.js",
+            filename: isProd ? "bundle.[contenthash].js" : "bundle.js",
           },
           resolve: {
             extensions: [".ts", ".js", ".json"],
@@ -284,7 +286,6 @@ gulp.task("js", () => {
     .pipe(gulp.dest(config.scripts.dest));
 });
 
-// Copy static assets
 gulp.task("static", async () => {
   try {
     await copyDir(config.images.src, config.images.dest);
@@ -295,7 +296,6 @@ gulp.task("static", async () => {
   }
 });
 
-// Copy fonts
 gulp.task("fonts", async () => {
   try {
     await copyDir(config.fonts.src, config.fonts.dest);
@@ -306,28 +306,24 @@ gulp.task("fonts", async () => {
   }
 });
 
-// Inject CSS and JS into HTML
 gulp.task("html", () => {
+  const jsPattern = `${config.scripts.dest}/bundle${isProd ? ".*" : ""}.js`;
+  const cssPattern = `${config.styles.dest}/bundle${isProd ? ".*" : ""}.css`;
+
   return gulp
     .src(config.html.src)
     .pipe(
       inject(
-        gulp.src(
-          [
-            `${config.scripts.dest}/bundle.js`,
-            `${config.styles.dest}/bundle.css`,
-          ],
-          {
-            read: false,
-          }
-        ),
+        gulp.src([jsPattern, cssPattern], {
+          read: false,
+        }),
         {
           ignorePath: config.buildDir.slice(2),
           addRootSlash: false,
         }
       )
     )
-    .pipe(replace(/img\/favicon\/img\/favicon\//g, "img/favicon/")) // Add this line
+    .pipe(replace(/img\/favicon\/img\/favicon\//g, "img/favicon/"))
     .pipe(
       replace("</head>", '<link rel="manifest" href="/manifest.json">\n</head>')
     )
@@ -335,7 +331,6 @@ gulp.task("html", () => {
     .pipe(bs.stream());
 });
 
-// Watch files
 gulp.task("watch", () => {
   bs.init({
     server: config.buildDir,
@@ -348,7 +343,6 @@ gulp.task("watch", () => {
   gulp.watch(config.html.src, gulp.series("html"));
 });
 
-// Build task
 gulp.task(
   "build",
   gulp.series(
@@ -359,5 +353,4 @@ gulp.task(
   )
 );
 
-// Default task
 gulp.task("default", gulp.series("build", "watch"));

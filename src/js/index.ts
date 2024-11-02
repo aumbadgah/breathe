@@ -18,10 +18,10 @@ import Config from "./Config";
 import MultiColorPicker from "./MultiColorPicker";
 import Navigation from "./Navigation";
 import State from "./State";
+import Tentacles from "./Tentacles";
 import Theme from "./Theme";
 import ThemeList from "./ThemeList";
 import Widget from "./Widget";
-import Tentacles from "./Tentacles";
 
 (function ($) {
   const template =
@@ -33,6 +33,7 @@ import Tentacles from "./Tentacles";
     '<div class="widget control-widget" id="theme-list"></div>' +
     "</div>" +
     '<div class="nav-bar" id="bottom-nav"></div>' +
+    '<div class="nav-bar" id="right-nav"></div>' +
     '<div class="nav-bar" id="top-nav"></div>' +
     "</div>";
 
@@ -42,30 +43,49 @@ import Tentacles from "./Tentacles";
       {
         name: "spooky",
         fa: "fa-solid fa-ghost",
-        // fa: "fa-bath",
         type: "nav-item left",
       },
       {
         name: "list",
-        // fa: "fa-list-ul",
         fa: "fa-solid fa-list-ul",
         type: "nav-item",
       },
       {
         name: "colorpicker",
-        // fa: "fa-paint-brush",
         fa: "fa-solid fa-paintbrush",
         type: "nav-item",
       },
       {
         name: "full",
-        id: "full",
-        // fa: "fa-desktop",
+        // id: "full",
         fa: "fa-solid fa-desktop",
         type: "nav-item",
       },
     ],
-    setActive: true,
+  };
+
+  const rightNav = {
+    id: "#right-nav",
+    items: [
+      {
+        name: "breathe-short",
+        fa: "fa-solid fa-lungs",
+        type: "nav-item",
+        label: "8.8 sec",
+      },
+      {
+        name: "breathe-medium",
+        fa: "fa-solid fa-lungs",
+        type: "nav-item active",
+        label: "11.4 sec",
+      },
+      {
+        name: "breathe-long",
+        fa: "fa-solid fa-lungs",
+        type: "nav-item",
+        label: "13.2 sec",
+      },
+    ],
   };
 
   const topNav = {
@@ -85,7 +105,6 @@ import Tentacles from "./Tentacles";
 
   const broadcast = (event: string, originalPayload: any) => {
     const handler = "on" + event.charAt(0).toUpperCase() + event.slice(1);
-
     const deepCopy = cloneDeep(originalPayload);
 
     if (typeof state[handler as keyof State] !== "undefined") {
@@ -98,13 +117,10 @@ import Tentacles from "./Tentacles";
   };
 
   const getState = function (property: keyof State, cb: (value: any) => void) {
-    // Vendor.ga("getState", property);
     cb(state[property]);
   };
 
   const init = () => {
-    // Vendor.init();
-
     $("body").html(template);
 
     state = new State({
@@ -129,7 +145,7 @@ import Tentacles from "./Tentacles";
         broadcast: broadcast,
       }),
       new Navigation("", {
-        navbars: [bottomNav, topNav],
+        navbars: [bottomNav, rightNav, topNav],
         getState: getState,
         broadcast: broadcast,
         container: state.container,

@@ -3,6 +3,13 @@ import assign from "lodash/assign";
 import { ThemeConfig } from "./Theme";
 import Widget from "./Widget";
 
+const today = new Date();
+const month = today.getMonth(); // 0-based: October is 9, November is 10
+const day = today.getDate();
+
+const isHalloweenSeason =
+  (month === 9 && day >= 15) || (month === 10 && day <= 15);
+
 interface BreatheProps {
   bellowsEase: string;
   theme: Partial<ThemeConfig>;
@@ -17,7 +24,7 @@ class Breathe extends Widget {
     bellows?: d3.Selection<SVGEllipseElement, unknown, HTMLElement, null>;
     center?: d3.Selection<SVGEllipseElement, unknown, HTMLElement, null>;
   };
-  isFirstLoop: boolean = true;
+  isSeasonalInitialised: boolean = false;
   isThemeSet: boolean = false;
 
   delay = 420;
@@ -151,6 +158,16 @@ class Breathe extends Widget {
     ]);
   }
 
+  onSetUiState(state: string) {
+    if (
+      isHalloweenSeason &&
+      !this.isSeasonalInitialised &&
+      state === "spooky"
+    ) {
+      this.isSeasonalInitialised = true;
+    }
+  }
+
   async transitionEmpty() {
     if (!this.width || !this.height) {
       return;
@@ -158,19 +175,10 @@ class Breathe extends Widget {
 
     const { backgroundEmpty, bellowsEmpty, centerEmpty } = this.config.theme;
 
-    if (this.isFirstLoop) {
-      const today = new Date();
-      const month = today.getMonth(); // 0-based: October is 9, November is 10
-      const day = today.getDate();
-
-      const isHalloweenSeason =
-        (month === 9 && day >= 15) || (month === 10 && day <= 15);
-
-      if (isHalloweenSeason) {
-        setTimeout(() => {
-          this.config.broadcast("setUiState", "spooky");
-        }, this.duration / 2);
-      }
+    if (isHalloweenSeason && !this.isSeasonalInitialised) {
+      setTimeout(() => {
+        this.config.broadcast("setUiState", "spooky");
+      }, this.duration / 2);
     }
 
     return Promise.all([
@@ -224,9 +232,9 @@ class Breathe extends Widget {
       await transition();
     }
 
-    if (this.isFirstLoop) {
-      this.isFirstLoop = false;
-    }
+    // if (this.isSeasonalInitialised) {
+    //   this.isSeasonalInitialised = false;
+    // }
     this.loop();
   }
 

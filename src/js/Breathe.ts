@@ -73,7 +73,6 @@ class Breathe extends Widget {
   }
 
   public onSetBreatheDuration(mode: "short" | "medium" | "long"): this {
-    console.log("onSetBreatheDuration", mode);
     if (mode === "short") {
       this.duration = 4400;
     } else if (mode === "medium") {
@@ -224,8 +223,6 @@ class Breathe extends Widget {
     for (const transition of transitions) {
       await transition();
     }
-
-    console.log(this.duration);
 
     if (this.isFirstLoop) {
       this.isFirstLoop = false;

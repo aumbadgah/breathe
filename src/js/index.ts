@@ -102,7 +102,6 @@ import Widget from "./Widget";
 
   const broadcast = (event: string, originalPayload: any) => {
     const handler = "on" + event.charAt(0).toUpperCase() + event.slice(1);
-
     const deepCopy = cloneDeep(originalPayload);
 
     if (typeof state[handler as keyof State] !== "undefined") {

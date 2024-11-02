@@ -61,8 +61,6 @@ class Navigation extends Widget {
     if (this.available) {
       this.available = false;
 
-      console.log("uiState", uiState);
-
       if (uiState === "spooky") {
         const [spooky] = this.items
           .filter((navItem) => navItem.type.includes("nav-item"))

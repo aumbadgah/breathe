@@ -57,7 +57,7 @@ import Widget from "./Widget";
       },
       {
         name: "full",
-        id: "full",
+        // id: "full",
         fa: "fa-solid fa-desktop",
         type: "nav-item",
       },
@@ -68,19 +68,22 @@ import Widget from "./Widget";
     id: "#right-nav",
     items: [
       {
-        name: "breathe-long",
+        name: "breathe-short",
         fa: "fa-solid fa-lungs",
         type: "nav-item",
+        label: "8.8 sec",
       },
       {
         name: "breathe-medium",
         fa: "fa-solid fa-lungs",
         type: "nav-item active",
+        label: "11.4 sec",
       },
       {
-        name: "breathe-short",
+        name: "breathe-long",
         fa: "fa-solid fa-lungs",
         type: "nav-item",
+        label: "13.2 sec",
       },
     ],
   };

@@ -171,8 +171,13 @@ class Scene {
   }
 
   addTentacle() {
-    const x = this.width / 2 + Random.float(-5, 5);
-    const y = this.height / 2 + Random.float(-5, 5);
+    const angle = Random.float(0, Math.PI * 2);
+    const radiusX = this.width * 0.03;
+    const radiusY = this.height * 0.03;
+    const r = Math.sqrt(Random.float(0, 1));
+    const x = this.width / 2 + radiusX * r * Math.cos(angle);
+    const y = this.height / 2 + radiusY * r * Math.sin(angle);
+
     const tentacle = new Tentacle({ x, y, colors: this.colors });
     const duration = Random.float(2.0, 3.0) * 1000;
     this.tentacles.push(tentacle);

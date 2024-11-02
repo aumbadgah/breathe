@@ -25,12 +25,26 @@
 
     .nav-item {
       height: 5em;
+      position: relative;
 
-      &#breathe-medium {
+      &#breathe-medium i {
         opacity: 0.7;
       }
-      &#breathe-short {
+      &#breathe-long i {
         opacity: 0.35;
+      }
+
+      .label {
+        left: -4em;
+        top: 1.5em;
+        font-size: 1.3em;
+        opacity: 0;
+        transition-property: opacity;
+        transition-duration: 0.2s;
+
+        &.visible {
+          opacity: 1;
+        }
       }
     }
   }
@@ -74,6 +88,10 @@
     &.active:not(#full) .fa {
       padding: 0.375em;
       background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .label {
+      position: absolute;
     }
   }
 }

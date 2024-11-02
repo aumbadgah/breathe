@@ -1,9 +1,7 @@
 @use "variables";
+@use "mixins";
 
 @use "color-picker";
-@use "container";
-@use "container-mobile";
-@use "content-widget";
 @use "control-widget";
 @use "nav-bar";
 @use "widgets";
@@ -24,16 +22,42 @@ body {
   position: relative;
 }
 
-.container:not(.mobile) ~ .sp-container {
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%);
-}
+.container {
+  width: 100%;
+  height: 100%;
+  font-size: 12px;
+  position: relative;
+  overflow: hidden;
 
-.sp-container {
-  background-color: white;
+  &:not(.mobile) ~ .sp-container {
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%);
+  }
 
-  .sp-button-container button {
-    background-image: initial;
+  &.mobile {
+    &.full {
+      .control-widget {
+        @include mixins.transition(right, variables.$transition-duration);
+        right: -33.3%;
+      }
+    }
+
+    &.colorpicker,
+    &.list {
+      .content-widget#tentacles {
+        left: calc((66.7% - 100%) / 2);
+      }
+
+      .content-widget,
+      .nav-bar {
+        @include mixins.transition(width, variables.$transition-duration);
+        width: 66.7%;
+      }
+      .control-widget {
+        @include mixins.transition(right, variables.$transition-duration);
+        right: 0;
+      }
+    }
   }
 }

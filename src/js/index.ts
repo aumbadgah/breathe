@@ -103,17 +103,32 @@ import Widget from "./Widget";
   let state: State;
   let widgets: Widget[] = [];
 
+  type Event = {
+    event: string;
+    payload: any;
+  };
+  const queue: Event[] = [];
+  let broadcasting = false;
+
   const broadcast = (event: string, originalPayload: any) => {
-    const handler = "on" + event.charAt(0).toUpperCase() + event.slice(1);
-    const deepCopy = cloneDeep(originalPayload);
+    queue.push({ event, payload: cloneDeep(originalPayload) });
 
-    if (typeof state[handler as keyof State] !== "undefined") {
-      (state[handler as keyof State] as (value: any) => void)(deepCopy);
+    if (!broadcasting) {
+      broadcasting = true;
+      while (queue.length > 0) {
+        const { event, payload } = queue.shift()!;
+        const handler = "on" + event.charAt(0).toUpperCase() + event.slice(1);
+
+        if (typeof state[handler as keyof State] !== "undefined") {
+          (state[handler as keyof State] as (value: any) => void)(payload);
+        }
+
+        widgets
+          .filter((widget) => typeof (widget as any)[handler] !== "undefined")
+          .forEach((widget) => (widget as any)[handler](payload));
+      }
+      broadcasting = false;
     }
-
-    widgets
-      .filter((widget) => typeof (widget as any)[handler] !== "undefined")
-      .forEach((widget) => (widget as any)[handler](deepCopy));
   };
 
   const getState = function (property: keyof State, cb: (value: any) => void) {
@@ -156,4 +171,8 @@ import Widget from "./Widget";
   };
 
   init();
+
+  $(window).on("load", () => {
+    $(window).trigger("resize");
+  });
 })($);

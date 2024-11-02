@@ -376,7 +376,7 @@ export default class Tentacles extends Widget {
       }, 2);
     };
 
-    if (this.elem) this.elem.click(() => broadcast("setUiState", "full"));
+    if (this.elem) this.elem.on("click", () => broadcast("setUiState", "full"));
 
     window.addEventListener("resize", throttle(resize, 5));
     resize();

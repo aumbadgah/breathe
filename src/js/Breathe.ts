@@ -4,7 +4,7 @@ import { ThemeConfig } from "./Theme";
 import Widget from "./Widget";
 
 const today = new Date();
-const month = today.getMonth(); // 0-based: October is 9, November is 10
+const month = today.getMonth();
 const day = today.getDate();
 
 const isHalloweenSeason =
@@ -232,9 +232,6 @@ class Breathe extends Widget {
       await transition();
     }
 
-    // if (this.isSeasonalInitialised) {
-    //   this.isSeasonalInitialised = false;
-    // }
     this.loop();
   }
 

@@ -91,6 +91,10 @@
     transition-property: width;
     transition-duration: 0.5s;
     width: 80%;
+
+    &#right-nav {
+      right: 20%;
+    }
   }
 }
 

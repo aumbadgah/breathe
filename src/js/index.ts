@@ -33,6 +33,7 @@ import Widget from "./Widget";
     '<div class="widget control-widget" id="theme-list"></div>' +
     "</div>" +
     '<div class="nav-bar" id="bottom-nav"></div>' +
+    '<div class="nav-bar" id="right-nav"></div>' +
     '<div class="nav-bar" id="top-nav"></div>' +
     "</div>";
 
@@ -61,7 +62,27 @@ import Widget from "./Widget";
         type: "nav-item",
       },
     ],
-    setActive: true,
+  };
+
+  const rightNav = {
+    id: "#right-nav",
+    items: [
+      {
+        name: "breathe-long",
+        fa: "fa-solid fa-lungs",
+        type: "nav-item",
+      },
+      {
+        name: "breathe-medium",
+        fa: "fa-solid fa-lungs",
+        type: "nav-item active",
+      },
+      {
+        name: "breathe-short",
+        fa: "fa-solid fa-lungs",
+        type: "nav-item",
+      },
+    ],
   };
 
   const topNav = {
@@ -122,7 +143,7 @@ import Widget from "./Widget";
         broadcast: broadcast,
       }),
       new Navigation("", {
-        navbars: [bottomNav, topNav],
+        navbars: [bottomNav, rightNav, topNav],
         getState: getState,
         broadcast: broadcast,
         container: state.container,

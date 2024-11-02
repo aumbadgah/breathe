@@ -72,6 +72,7 @@ const Config = {
     },
   ],
   defaultUiState: "full",
+  defaultBreatheState: "breathe-medium",
 };
 
 export default Config;

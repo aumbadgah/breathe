@@ -13,6 +13,27 @@
   &#bottom-nav {
     bottom: 0;
   }
+  &#right-nav {
+    height: calc(100% - (4em * 2));
+    width: 5em;
+    top: 4em;
+    right: 0;
+    left: initial;
+    padding-top: calc(100% - 15em);
+    transition-property: right !important;
+    transition-duration: 0.5s !important;
+
+    .nav-item {
+      height: 5em;
+
+      &#breathe-medium {
+        opacity: 0.7;
+      }
+      &#breathe-short {
+        opacity: 0.35;
+      }
+    }
+  }
 
   .nav-item {
     height: 100%;

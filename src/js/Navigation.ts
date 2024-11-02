@@ -61,6 +61,8 @@ class Navigation extends Widget {
     if (this.available) {
       this.available = false;
 
+      console.log("uiState", uiState);
+
       if (uiState === "spooky") {
         const [spooky] = this.items
           .filter((navItem) => navItem.type.includes("nav-item"))
@@ -81,10 +83,36 @@ class Navigation extends Widget {
             this.config.broadcast("stopTentacles", null);
           }, 500);
         }
+      } else if (
+        uiState === "breathe-short" ||
+        uiState === "breathe-medium" ||
+        uiState === "breathe-long"
+      ) {
+        this.config.broadcast(
+          "setBreatheDuration",
+          uiState.replace("breathe-", "")
+        );
+        this.items
+          .filter((navItem) => navItem.type.includes("nav-item"))
+          .filter((navItem) =>
+            ["breathe-short", "breathe-medium", "breathe-long"].includes(
+              navItem.name
+            )
+          )
+          .map((navItem) => {
+            if (navItem.name === uiState && navItem.elem) {
+              navItem.elem.addClass("active");
+            } else if (navItem.elem) {
+              navItem.elem.removeClass("active");
+            }
+            return navItem.name;
+          });
       } else {
         const validUiStates = this.items
           .filter((navItem) => navItem.type.includes("nav-item"))
-          .filter((navItem) => navItem.name !== "spooky")
+          .filter((navItem) =>
+            ["full", "list", "colorpicker"].includes(navItem.name)
+          )
           .map((navItem) => {
             if (navItem.name === uiState && navItem.elem) {
               navItem.elem.addClass("active");

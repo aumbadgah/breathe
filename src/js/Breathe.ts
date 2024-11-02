@@ -69,7 +69,19 @@ class Breathe extends Widget {
     this.elements = {};
 
     if (this.elem)
-      this.elem.click(() => this.config.broadcast("setUiState", "full"));
+      this.elem.on("click", () => this.config.broadcast("setUiState", "full"));
+  }
+
+  public onSetBreatheDuration(mode: "short" | "medium" | "long"): this {
+    console.log("onSetBreatheDuration", mode);
+    if (mode === "short") {
+      this.duration = 4400;
+    } else if (mode === "medium") {
+      this.duration = 5700;
+    } else {
+      this.duration = 6600;
+    }
+    return this;
   }
 
   public onSetTheme(theme: BreatheProps["theme"]): this {
@@ -212,6 +224,8 @@ class Breathe extends Widget {
     for (const transition of transitions) {
       await transition();
     }
+
+    console.log(this.duration);
 
     if (this.isFirstLoop) {
       this.isFirstLoop = false;

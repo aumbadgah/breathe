@@ -19,9 +19,14 @@
     top: 4em;
     right: 0;
     left: initial;
-    padding-top: calc(100% - 15em);
     transition-property: right !important;
     transition-duration: 0.5s !important;
+
+    padding-bottom: 1em;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 
     .nav-item {
       height: 5em;

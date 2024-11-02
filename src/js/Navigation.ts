@@ -1,7 +1,6 @@
 import $ from "jquery";
 import State from "./State";
 import Widget from "./Widget";
-import { forEach } from "lodash";
 
 interface NavItem {
   name: string;

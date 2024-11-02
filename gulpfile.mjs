@@ -1,4 +1,3 @@
-import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 
@@ -90,7 +89,6 @@ async function copyDir(src, dest) {
   }
 }
 
-// Clean build folder
 gulp.task("clean", async () => {
   try {
     await fs.rm(config.buildDir, { recursive: true, force: true });
@@ -135,7 +133,6 @@ async function generateIconsArray(directory) {
   return icons;
 }
 
-// Generate manifest.json
 gulp.task("manifest", async () => {
   const {
     name,
@@ -175,7 +172,6 @@ gulp.task("manifest", async () => {
   }
 });
 
-// SCSS task
 gulp.task("scss", () => {
   return gulp
     .src(config.styles.src)
@@ -214,7 +210,6 @@ gulp.task("scss", () => {
     .pipe(bs.stream());
 });
 
-// JS task
 gulp.task("js", () => {
   return gulp
     .src(config.scripts.src)
@@ -291,7 +286,6 @@ gulp.task("js", () => {
     .pipe(gulp.dest(config.scripts.dest));
 });
 
-// Copy static assets
 gulp.task("static", async () => {
   try {
     await copyDir(config.images.src, config.images.dest);
@@ -302,7 +296,6 @@ gulp.task("static", async () => {
   }
 });
 
-// Copy fonts
 gulp.task("fonts", async () => {
   try {
     await copyDir(config.fonts.src, config.fonts.dest);
@@ -313,7 +306,6 @@ gulp.task("fonts", async () => {
   }
 });
 
-// Inject CSS and JS into HTML
 gulp.task("html", () => {
   const jsPattern = `${config.scripts.dest}/bundle${isProd ? ".*" : ""}.js`;
   const cssPattern = `${config.styles.dest}/bundle${isProd ? ".*" : ""}.css`;
@@ -331,7 +323,7 @@ gulp.task("html", () => {
         }
       )
     )
-    .pipe(replace(/img\/favicon\/img\/favicon\//g, "img/favicon/")) // Add this line
+    .pipe(replace(/img\/favicon\/img\/favicon\//g, "img/favicon/"))
     .pipe(
       replace("</head>", '<link rel="manifest" href="/manifest.json">\n</head>')
     )
@@ -339,7 +331,6 @@ gulp.task("html", () => {
     .pipe(bs.stream());
 });
 
-// Watch files
 gulp.task("watch", () => {
   bs.init({
     server: config.buildDir,
@@ -352,7 +343,6 @@ gulp.task("watch", () => {
   gulp.watch(config.html.src, gulp.series("html"));
 });
 
-// Build task
 gulp.task(
   "build",
   gulp.series(
@@ -363,5 +353,4 @@ gulp.task(
   )
 );
 
-// Default task
 gulp.task("default", gulp.series("build", "watch"));

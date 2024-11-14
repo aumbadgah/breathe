@@ -67,7 +67,15 @@ class Navigation extends Widget {
     if (this.available) {
       this.available = false;
 
-      if (uiState === "spooky") {
+      if (uiState === "seasonal-enabled") {
+        const [spooky] = this.items.filter(
+          (navItem) => navItem.name === "spooky"
+        );
+
+        if (spooky.elem && !spooky.elem.hasClass("enabled")) {
+          spooky.elem.addClass("enabled");
+        }
+      } else if (uiState === "spooky") {
         const [spooky] = this.items.filter(
           (navItem) => navItem.name === "spooky"
         );

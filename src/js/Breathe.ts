@@ -160,9 +160,8 @@ class Breathe extends Widget {
 
   onSetUiState(state: string) {
     if (
-      isHalloweenSeason &&
       !this.isSeasonalInitialised &&
-      state === "spooky"
+      ["spooky", "seasonal-enabled"].includes(state)
     ) {
       this.isSeasonalInitialised = true;
     }
@@ -175,10 +174,16 @@ class Breathe extends Widget {
 
     const { backgroundEmpty, bellowsEmpty, centerEmpty } = this.config.theme;
 
-    if (isHalloweenSeason && !this.isSeasonalInitialised) {
-      setTimeout(() => {
-        this.config.broadcast("setUiState", "spooky");
-      }, this.duration / 2);
+    if (!this.isSeasonalInitialised) {
+      if (isHalloweenSeason) {
+        setTimeout(() => {
+          this.config.broadcast("setUiState", "spooky");
+        }, this.duration / 2);
+      } else {
+        setTimeout(() => {
+          this.config.broadcast("setUiState", "seasonal-enabled");
+        }, this.duration / 2);
+      }
     }
 
     return Promise.all([
